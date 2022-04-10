@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database connection settings -->
+        <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/PortalShard?serverTimezone=UTC</property>
+        <property name="connection.username">PortalShard</property>
+        <property name="connection.password">1234QWer!!</property>
+
+        <!-- SQL dialect -->
+        <property name="dialect">org.hibernate.dialect.MySQL5Dialect</property>
+
+        <!-- Validate the database schema on startup -->
+        <property name="hbm2ddl.auto">validate</property>
+
+        <!-- show the queries prepared by Hibernate-->
+        <property name="show_sql">true</property>
+
+        <!-- Names the annotated entity class -->
+        <mapping class="Portal"/>
+    </session-factory>
+</hibernate-configuration>

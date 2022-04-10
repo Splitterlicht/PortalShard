@@ -1,0 +1,11 @@
+name: PortalShard
+version: '${project.version}'
+main: grafnus.portalshard.PortalShard
+api-version: 1.18
+prefix: PortalShard
+load: STARTUP
+authors: [ Grafnus ]
+description: Teleport to your most important locations via portal
+commands:
+  portal:
+    description: portal util
