@@ -1,5 +1,7 @@
 package grafnus.portalshard.listeners;
 
+import grafnus.portalshard.engine.PortalEngine;
+import grafnus.portalshard.engine.events.EEvents;
 import grafnus.portalshard.util.placement.PlacementChecker;
 import grafnus.portalshard.util.placement.RelativePosition;
 import org.bukkit.Bukkit;
@@ -17,7 +19,14 @@ import java.util.logging.Level;
 public class BlockBreakListener implements Listener {
 
     @EventHandler
-    public void onBlockBreakEvent(BlockPhysicsEvent event) {
+    public void onBlockBreakEvent(BlockBreakEvent event) {
+        Bukkit.getLogger().log(Level.INFO, "Calling Obsidian Break Engine Event");
+        PortalEngine.getInstance().listenToEvent(event, EEvents.CRYING_OBSIDIAN_BREAK);
+    }
+
+    @EventHandler
+    public void onBlockPhysicsEvent(BlockPhysicsEvent event) {
+
         if (!event.getBlock().getType().equals(Material.RESPAWN_ANCHOR)) {
             return;
         }

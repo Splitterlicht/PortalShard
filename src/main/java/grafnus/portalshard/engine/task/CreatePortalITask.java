@@ -10,11 +10,11 @@ import org.bukkit.block.data.Orientable;
 import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class CreatePortalTask implements TaskBlueprint {
+public class CreatePortalITask implements ITaskBlueprint {
 
     private Location location;
 
-    public CreatePortalTask(Location loc) {
+    public CreatePortalITask(Location loc) {
         location = loc;
     }
 

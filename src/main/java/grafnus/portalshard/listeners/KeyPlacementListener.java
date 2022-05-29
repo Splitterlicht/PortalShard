@@ -1,12 +1,11 @@
 package grafnus.portalshard.listeners;
 
-import grafnus.portalshard.engine.PortalEngine;
-import grafnus.portalshard.engine.task.CreatePortalTask;
-import grafnus.portalshard.engine.task.TaskFactory;
 import grafnus.portalshard.items.ItemHandler;
 import grafnus.portalshard.portals.PortalHandler;
 import grafnus.portalshard.util.key.UUIDGrabber;
 import grafnus.portalshard.util.placement.PlacementChecker;
+import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -26,7 +25,6 @@ public class KeyPlacementListener implements Listener {
         if (!PlacementChecker.isPortalFrame(e.getBlockPlaced().getLocation())) {
             return;
         }
-
         PortalHandler.getInstance().createNewPortal(e.getBlockPlaced().getLocation(), UUIDGrabber.getUUIDFromKey(placed), e.getPlayer());
 
         if (placed.getAmount() == 1) {

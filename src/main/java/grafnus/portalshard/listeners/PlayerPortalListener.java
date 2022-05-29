@@ -4,7 +4,8 @@ import grafnus.portalshard.database.data.ConnectionData;
 import grafnus.portalshard.database.data.PortalData;
 import grafnus.portalshard.database.tables.ConnectionTable;
 import grafnus.portalshard.database.tables.PortalTable;
-import grafnus.portalshard.engine.task.CreatePortalTask;
+import grafnus.portalshard.engine.PortalEngine;
+import grafnus.portalshard.engine.events.EEvents;
 import grafnus.portalshard.engine.task.TaskFactory;
 import grafnus.portalshard.engine.task.UpdatePortalCharges;
 import grafnus.portalshard.util.location.LocationChecker;
@@ -15,17 +16,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPortalEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 
 public class PlayerPortalListener implements Listener {
 
     @EventHandler
     public void onPlayerPortal(PlayerPortalEvent event) {
+
+        PortalEngine.getInstance().listenToEvent(event, EEvents.PLAYER_PORTAL);
+
+        return;
+        /*
         int[] y = {0, 1};
         for (int i : y){
             Location from = event.getFrom();
@@ -69,12 +71,7 @@ public class PlayerPortalListener implements Listener {
                     }
                 }
             }
-        }
-    }
-
-    @EventHandler
-    public void onSoundPlayed() {
-
+        }*/
     }
 
 }

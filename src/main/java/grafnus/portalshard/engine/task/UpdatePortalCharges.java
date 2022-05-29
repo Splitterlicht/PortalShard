@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class UpdatePortalCharges implements TaskBlueprint {
+public class UpdatePortalCharges implements ITaskBlueprint {
 
     private Location location;
 

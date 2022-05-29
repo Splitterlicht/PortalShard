@@ -4,24 +4,16 @@ import grafnus.portalshard.PortalShard;
 import grafnus.portalshard.database.data.PortalData;
 import grafnus.portalshard.database.tables.ConnectionTable;
 import grafnus.portalshard.database.tables.PortalTable;
-import grafnus.portalshard.engine.task.CreatePortalTask;
+import grafnus.portalshard.engine.task.CreatePortalITask;
 import grafnus.portalshard.engine.task.TaskFactory;
-import grafnus.portalshard.util.placement.PORTAL_ORIENTATION;
-import grafnus.portalshard.util.placement.PlacementChecker;
-import org.bukkit.Axis;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.Orientable;
-import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class PortalHandler {
 
@@ -50,7 +42,7 @@ public class PortalHandler {
                     ConnectionTable.connectPortals(uuid, 20);
                 }
 
-                CreatePortalTask task = new CreatePortalTask(loc);
+                CreatePortalITask task = new CreatePortalITask(loc);
                 TaskFactory.createTask(task);
                 //PortalHandler.getInstance().addOpenPortalCreations(loc);
             }
