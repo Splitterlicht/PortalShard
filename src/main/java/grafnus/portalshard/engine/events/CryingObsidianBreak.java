@@ -1,11 +1,13 @@
 package grafnus.portalshard.engine.events;
 
+import grafnus.portalshard.engine.Converter;
 import grafnus.portalshard.util.placement.RelativePosition;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ public class CryingObsidianBreak implements IEvent {
 
     @Override
     public void listen(Event event) {
-        BlockBreakEvent e = convert(event);
+        BlockBreakEvent e = Converter.convert(event, BlockBreakEvent.class);
         if (e == null)
             return;
         if (!e.getBlock().getType().equals(Material.CRYING_OBSIDIAN))
@@ -47,12 +49,5 @@ public class CryingObsidianBreak implements IEvent {
                 locs.add(RelativePosition.getLocationBelow(loc));
             }
         }
-    }
-
-    private BlockBreakEvent convert(Event event) {
-        if (event instanceof BlockBreakEvent) {
-            return (BlockBreakEvent) event;
-        }
-        return null;
     }
 }

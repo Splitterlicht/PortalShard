@@ -18,7 +18,7 @@ public class BaseCommand implements CommandExecutor {
         Player p = (Player) sender;
 
         p.sendMessage("Portal Key Dropped");
-        p.getLocation().getWorld().dropItem(p.getLocation(), ItemFactory.buildItem(ITEMS.KEY));
+        p.getLocation().getWorld().dropItem(p.getLocation(), ItemFactory.buildItem(ITEMS.KEY, p));
         return true;
     }
 }

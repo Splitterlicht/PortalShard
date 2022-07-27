@@ -1,31 +1,23 @@
 package grafnus.portalshard.database.data;
 
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-
-import java.util.UUID;
 
 public class PortalData {
 
-    private OfflinePlayer player;
     private Location loc;
-    private UUID uuid;
+    private float connection_id;
+    private float id;
 
-    public PortalData(Location loc, UUID uuid, OfflinePlayer player) {
+    public PortalData(float cID, Location loc) {
         this.loc = loc;
-        this.uuid = uuid;
-        this.player = player;
+        this.connection_id = cID;
     }
 
     public Location getLoc() {
         return loc;
     }
 
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public OfflinePlayer getPlayer() {
-        return player;
+    public float getConnection_id() {
+        return connection_id;
     }
 }

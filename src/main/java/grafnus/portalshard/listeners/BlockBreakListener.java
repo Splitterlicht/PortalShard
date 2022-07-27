@@ -20,22 +20,9 @@ public class BlockBreakListener implements Listener {
 
     @EventHandler
     public void onBlockBreakEvent(BlockBreakEvent event) {
-        Bukkit.getLogger().log(Level.INFO, "Calling Obsidian Break Engine Event");
-        PortalEngine.getInstance().listenToEvent(event, EEvents.CRYING_OBSIDIAN_BREAK);
-    }
-
-    @EventHandler
-    public void onBlockPhysicsEvent(BlockPhysicsEvent event) {
-
-        if (!event.getBlock().getType().equals(Material.RESPAWN_ANCHOR)) {
-            return;
-        }
-        if (!RelativePosition.getLocationBelow(event.getBlock().getLocation()).getBlock().getType().equals(Material.NETHER_PORTAL)) {
-            return;
-        }
-        if (!RelativePosition.getLocationBelowN(event.getBlock().getLocation(), 2).getBlock().getType().equals(Material.NETHER_PORTAL)) {
-            return;
-        }
-        event.setCancelled(true);
+        if (event.getBlock().getType().equals(Material.CRYING_OBSIDIAN))
+            PortalEngine.getInstance().listenToEvent(event, EEvents.CRYING_OBSIDIAN_BREAK);
+        if (event.getBlock().getType().equals(Material.RESPAWN_ANCHOR))
+            PortalEngine.getInstance().listenToEvent(event, EEvents.RESPAWN_ANCHOR_BREAK);
     }
 }

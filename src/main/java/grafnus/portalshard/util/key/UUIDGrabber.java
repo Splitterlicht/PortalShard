@@ -9,9 +9,11 @@ public class UUIDGrabber {
 
     public static UUID getUUIDFromKey(ItemStack key) {
         List<String> lore = key.getItemMeta().getLore();
-        if (lore.size() == 5) {
-            String uuid = lore.get(4);
-            return UUID.fromString(uuid);
+
+        for (String s : lore) {
+            if (s.startsWith("Key: ")) {
+                return UUID.fromString(s.replace("Key: ", ""));
+            }
         }
         return null;
     }

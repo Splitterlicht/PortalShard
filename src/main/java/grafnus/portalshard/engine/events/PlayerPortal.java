@@ -1,11 +1,14 @@
 package grafnus.portalshard.engine.events;
 
+import grafnus.portalshard.PortalShard;
 import grafnus.portalshard.database.data.ConnectionData;
 import grafnus.portalshard.database.data.PortalData;
-import grafnus.portalshard.database.tables.ConnectionTable;
-import grafnus.portalshard.database.tables.PortalTable;
+import grafnus.portalshard.database.tables.DBConnection;
+import grafnus.portalshard.database.tables.DBPortal;
+import grafnus.portalshard.engine.Converter;
 import grafnus.portalshard.engine.task.TaskFactory;
 import grafnus.portalshard.engine.task.UpdatePortalCharges;
+import grafnus.portalshard.listeners.PlayerPortalListener;
 import grafnus.portalshard.util.location.LocationChecker;
 import grafnus.portalshard.util.placement.RelativePosition;
 import net.kyori.adventure.text.Component;
@@ -15,9 +18,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -30,61 +34,82 @@ public class PlayerPortal implements IEvent {
 
     @Override
     public void listen(Event event) {
-        if (!isInstanceOfEvent(event))
+        EntityPortalEnterEvent e = Converter.convert(event, EntityPortalEnterEvent.class);
+        if (e == null)
             return;
 
-        PlayerPortalEvent e = convert(event);
+        if (!(e.getEntity() instanceof Player)) {
+            return;
+        }
 
-        Location loc = getSourceLocation(e.getFrom());
+        Player player = (Player) e.getEntity();
+        Location loc = getSourceLocation(e.getLocation());
 
-        Player player = e.getPlayer();
+        ArrayList<PortalData> data = DBPortal.getPortal(loc);
 
-        ArrayList<PortalData> data = PortalTable.getPortalByLocation(loc);
+        BukkitRunnable remove = new BukkitRunnable() {
+            @Override
+            public void run() {
+                PlayerPortalListener.lastTeleportedTo.remove(player);
+                PlayerPortalListener.recentlyTeleported.remove(player);
+            }
+        };
+        remove.runTaskLater(PortalShard.getInstance(), 200);
+
         if (data.size() == 1) {
-            e.setCancelled(true);
+            PlayerPortalListener.recentlyTeleported.add(player);
             PortalData portal = data.get(0);
-            ArrayList<ConnectionData> cd = ConnectionTable.getConnection(portal.getUuid());
+            ArrayList<ConnectionData> cd = DBConnection.getConnection(portal.getConnection_id());
             if (cd.size() <= 0) {
                 return;
             }
+
             ConnectionData c = cd.get(0);
+            if (!player.getUniqueId().toString().equals(c.getPlayer().getUniqueId().toString())) {
+                String errorActionBar = ChatColor.LIGHT_PURPLE +  "You are not permitted to use the portal!";
+
+                player.sendActionBar(Component.text(errorActionBar));
+                return;
+            }
+
+            ArrayList<PortalData> pair = DBPortal.getPortalByConnID(portal.getConnection_id());
+
+            if (pair.size() != 2) {
+                String actionbar = ChatColor.LIGHT_PURPLE +  "No portal endpoint!";
+
+                player.sendActionBar(Component.text(actionbar));
+                return;
+            }
+
             if (c.getCharges() == 0) {
                 String actionbar = ChatColor.LIGHT_PURPLE +  "No charges left!";
 
-                e.getPlayer().sendActionBar(Component.text(actionbar));
+                player.sendActionBar(Component.text(actionbar));
                 return;
             }
-            ConnectionTable.updateCharges(c.getUuid(), c.getCharges() - 1);
+            DBConnection.updateCharges(c.getUuid(), c.getCharges() - 1);
 
             String actionbar = ChatColor.LIGHT_PURPLE +  "You have " + ChatColor.GOLD + (c.getCharges() - 1) + ChatColor.LIGHT_PURPLE + " charges left!";
 
-            e.getPlayer().sendActionBar(Component.text(actionbar));
+            player.sendActionBar(Component.text(actionbar));
 
-            ArrayList<PortalData> portals = PortalTable.getPortalByUuid(portal.getUuid());
-            for (PortalData d : portals) {
+            for (PortalData d : pair) {
                 UpdatePortalCharges task = new UpdatePortalCharges(d.getLoc());
                 TaskFactory.createTask(task);
             }
 
-            ArrayList<PortalData> pair = PortalTable.getPortalByUuid(portal.getUuid());
             for (PortalData p : pair) {
                 if (!LocationChecker.isSameBlock(p.getLoc(), portal.getLoc())) {
-                    e.setCancelled(false);
-                    e.setTo(p.getLoc());
+
+                    Location dest = p.getLoc().add(new Vector(0.5, 0, 0.5));
+                    dest.setYaw(player.getLocation().getYaw());
+                    dest.setPitch(player.getLocation().getPitch());
+
+                    PlayerPortalListener.lastTeleportedTo.put(player, dest);
+                    player.teleport(dest);
                 }
             }
         }
-    }
-
-    private boolean isInstanceOfEvent(Event event) {
-        return event instanceof PlayerPortalEvent;
-    }
-
-    private PlayerPortalEvent convert(Event event) {
-        if (event instanceof PlayerPortalEvent)
-            return (PlayerPortalEvent) event;
-        else
-            return null;
     }
 
     private Location getSourceLocation(Location loc) {
@@ -95,15 +120,4 @@ public class PlayerPortal implements IEvent {
         }
         return result;
     }
-
-    /*private boolean doChecks(PlayerPortalEvent event) {
-
-        if (!event.)
-
-        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-            return false;
-        if (!event.getClickedBlock().getType().equals(Material.RESPAWN_ANCHOR))
-            return false;
-        return true;
-    }*/
 }

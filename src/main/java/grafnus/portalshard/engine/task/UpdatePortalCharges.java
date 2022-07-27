@@ -2,8 +2,8 @@ package grafnus.portalshard.engine.task;
 
 import grafnus.portalshard.database.data.ConnectionData;
 import grafnus.portalshard.database.data.PortalData;
-import grafnus.portalshard.database.tables.ConnectionTable;
-import grafnus.portalshard.database.tables.PortalTable;
+import grafnus.portalshard.database.tables.DBConnection;
+import grafnus.portalshard.database.tables.DBPortal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,7 +12,6 @@ import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
-import java.util.UUID;
 import java.util.logging.Level;
 
 public class UpdatePortalCharges implements ITaskBlueprint {
@@ -32,15 +31,14 @@ public class UpdatePortalCharges implements ITaskBlueprint {
                 if (!anchor.getType().equals(Material.RESPAWN_ANCHOR)) {
                     return;
                 }
-                ArrayList<PortalData> portals = PortalTable.getPortalByLocation(location);
+                ArrayList<PortalData> portals = DBPortal.getPortal(location);
                 if (portals.size() != 1) {
                     Bukkit.getLogger().log(Level.INFO, "Could not find Portal!");
                 }
 
                 PortalData portal = portals.get(0);
-                UUID uuid = portal.getUuid();
 
-                ArrayList<ConnectionData> conns = ConnectionTable.getConnection(uuid);
+                ArrayList<ConnectionData> conns = DBConnection.getConnection(portal.getConnection_id());
                 if (conns.size() != 1) {
                     Bukkit.getLogger().log(Level.INFO, "Could not find portal Connection!");
                 }
