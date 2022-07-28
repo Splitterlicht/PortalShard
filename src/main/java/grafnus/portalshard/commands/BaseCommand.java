@@ -1,5 +1,6 @@
 package grafnus.portalshard.commands;
 
+import grafnus.portalshard.commands.subcommands.FFACommand;
 import grafnus.portalshard.commands.subcommands.PlayerCommand;
 import grafnus.portalshard.items.ITEMS;
 import grafnus.portalshard.items.ItemFactory;
@@ -16,6 +17,7 @@ public class BaseCommand extends AbstractCommand implements CommandExecutor {
     public BaseCommand() {
         super("portal", "Base Command of PortalShard");
         addSubCommand(new PlayerCommand());
+        addSubCommand(new FFACommand());
     }
 
     @Override

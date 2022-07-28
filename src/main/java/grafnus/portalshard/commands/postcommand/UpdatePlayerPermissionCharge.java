@@ -15,15 +15,19 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 
-public class UpdatePlayerPermissionUse extends AbstractPostCommandInteraction {
+public class UpdatePlayerPermissionCharge extends AbstractPostCommandInteraction {
 
     private OfflinePlayer target;
     private boolean value;
 
-    public UpdatePlayerPermissionUse(Player sender, OfflinePlayer target, boolean value) {
+    public UpdatePlayerPermissionCharge(Player sender, OfflinePlayer target, boolean value) {
         super(sender, Material.RESPAWN_ANCHOR);
         this.target = target;
         this.value = value;
+    }
+
+    public UpdatePlayerPermissionCharge(Player sender, Material material) {
+        super(sender, material);
     }
 
     @Override
@@ -48,9 +52,9 @@ public class UpdatePlayerPermissionUse extends AbstractPostCommandInteraction {
         ConnectionData conn = cData.get(0);
 
         DBPlayerPerms.addIfNotPresent(cID, getSender());
-        DBPlayerPerms.setUse(cID, getTarget(), isValue());
+        DBPlayerPerms.setCharge(cID, getTarget(), isValue());
 
-        getSender().sendMessage("You set the permission to use the portal for " + getTarget().getName() + " to " + Boolean.toString(value));
+        getSender().sendMessage("You set the permission to charge the portal for " + getTarget().getName() + " to " + Boolean.toString(value));
         return;
     }
 

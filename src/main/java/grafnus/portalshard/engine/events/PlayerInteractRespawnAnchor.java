@@ -69,6 +69,10 @@ public class PlayerInteractRespawnAnchor implements IEvent {
 
         event.setCancelled(true);
 
+        if (!PortalEngine.getInstance().getPlayerPermissionCheck().canCharge(portals.get(0).getConnection_id(), event.getPlayer())) {
+            return;
+        }
+
         if (conns.get(0).getCharges() >= 20) {
             openMenu(event);
             return;

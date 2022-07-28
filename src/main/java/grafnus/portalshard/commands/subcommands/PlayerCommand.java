@@ -1,6 +1,9 @@
 package grafnus.portalshard.commands.subcommands;
 
 import grafnus.portalshard.commands.AbstractCommand;
+import grafnus.portalshard.commands.postcommand.UpdatePlayerPermissionCharge;
+import grafnus.portalshard.commands.postcommand.UpdatePlayerPermissionDestroy;
+import grafnus.portalshard.commands.postcommand.UpdatePlayerPermissionUpgrade;
 import grafnus.portalshard.commands.postcommand.UpdatePlayerPermissionUse;
 import grafnus.portalshard.engine.PortalEngine;
 import org.bukkit.Bukkit;
@@ -53,13 +56,16 @@ public class PlayerCommand extends AbstractCommand {
 
                 break;
             case "charge":
-                //Update charge
+                UpdatePlayerPermissionCharge charge = new UpdatePlayerPermissionCharge(p, player, value);
+                PortalEngine.getInstance().getPostCommandHandler().addPostCommandAction(charge, 200L, "Your interaction has been canceled! (Timeout)");
                 break;
             case "upgrade":
-                //Update upgrade
+                UpdatePlayerPermissionUpgrade upgrade = new UpdatePlayerPermissionUpgrade(p, player, value);
+                PortalEngine.getInstance().getPostCommandHandler().addPostCommandAction(upgrade, 200L, "Your interaction has been canceled! (Timeout)");
                 break;
             case "destroy":
-                //Update destroy
+                UpdatePlayerPermissionDestroy destroy = new UpdatePlayerPermissionDestroy(p, player, value);
+                PortalEngine.getInstance().getPostCommandHandler().addPostCommandAction(destroy, 200L, "Your interaction has been canceled! (Timeout)");
                 break;
             case "remove":
                 //Update destroy

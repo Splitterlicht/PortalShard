@@ -33,7 +33,7 @@ public class PostCommandHandler {
             return false;
         }
 
-
+        waitingActions.remove(action);
         return executeInteraction(action, block);
 
     }

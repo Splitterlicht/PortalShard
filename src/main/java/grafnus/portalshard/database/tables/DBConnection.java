@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class DBConnection extends DataTable {
 
@@ -19,7 +20,7 @@ public class DBConnection extends DataTable {
                 "`uuid` VARCHAR(255) NOT NULL," +
                 "`charges` INT NOT NULL, " +
                 "`level` INT NOT NULL," +
-                "`ffa` VARCHAR(255) NOT NULL," +
+                "`ffa` BOOLEAN NOT NULL," +
                 "`created_by` VARCHAR(255) NOT NULL," +
                 "`created` DATETIME," +
                 "`updated` DATETIME," +
@@ -35,7 +36,7 @@ public class DBConnection extends DataTable {
             p.setString(1, data.getUuid().toString());
             p.setInt(2, data.getCharges());
             p.setInt(3, data.getLevel());
-            p.setString(4, Boolean.toString(data.isFfa()));
+            p.setBoolean(4, data.isFfa());
             p.setString(5, player.getUniqueId().toString());
             int status = p.executeUpdate();
             return null;
@@ -54,7 +55,7 @@ public class DBConnection extends DataTable {
             while(rs.next()) {
                 UUID id = UUID.fromString(rs.getString("uuid"));
                 UUID player = UUID.fromString(rs.getString("created_by"));
-                ConnectionData cd = new ConnectionData(id, rs.getInt("charges"), rs.getInt("level"), Boolean.getBoolean(rs.getString("ffa")), Bukkit.getOfflinePlayer(player));
+                ConnectionData cd = new ConnectionData(id, rs.getInt("charges"), rs.getInt("level"), rs.getBoolean("ffa"), Bukkit.getOfflinePlayer(player));
                 data.add(cd);
             }
             return null;
@@ -73,7 +74,7 @@ public class DBConnection extends DataTable {
             while(rs.next()) {
                 UUID rs_id = UUID.fromString(rs.getString("uuid"));
                 UUID player = UUID.fromString(rs.getString("created_by"));
-                ConnectionData cd = new ConnectionData(rs_id, rs.getInt("charges"), rs.getInt("level"), Boolean.getBoolean(rs.getString("ffa")), Bukkit.getOfflinePlayer(player));
+                ConnectionData cd = new ConnectionData(rs_id, rs.getInt("charges"), rs.getInt("level"), rs.getBoolean("ffa"), Bukkit.getOfflinePlayer(player));
                 data.add(cd);
             }
             return null;
@@ -84,7 +85,7 @@ public class DBConnection extends DataTable {
     public static float getConnectionID(UUID uuid) {
         ArrayList<Float> ids = new ArrayList<>();
 
-        String query = "SELECT `id`, `ffa` FROM `connection` WHERE `uuid` = ?;";
+        String query = "SELECT `id` FROM `connection` WHERE `uuid` = ?;";
         DataSource.getInstance().execute( (conn) -> {
             PreparedStatement p = conn.prepareStatement(query);
             p.setString(1, uuid.toString());
@@ -127,7 +128,7 @@ public class DBConnection extends DataTable {
         String update = "UPDATE `connection` SET `ffa` = ? WHERE CONCAT(`connection`.`uuid`) = ? ;";
         DataSource.getInstance().execute( (conn) -> {
             PreparedStatement p = conn.prepareStatement(update);
-            p.setString(1, Boolean.toString(b));
+            p.setBoolean(1, b);
             p.setString(2, uuid.toString());
             p.executeUpdate();
             return null;

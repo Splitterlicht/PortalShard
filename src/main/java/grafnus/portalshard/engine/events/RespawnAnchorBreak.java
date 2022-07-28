@@ -5,6 +5,7 @@ import grafnus.portalshard.database.data.PortalData;
 import grafnus.portalshard.database.tables.DBConnection;
 import grafnus.portalshard.database.tables.DBPortal;
 import grafnus.portalshard.engine.Converter;
+import grafnus.portalshard.engine.PortalEngine;
 import grafnus.portalshard.items.ITEMS;
 import grafnus.portalshard.items.ItemFactory;
 import grafnus.portalshard.util.placement.RelativePosition;
@@ -47,6 +48,13 @@ public class RespawnAnchorBreak implements IEvent {
             return;
 
         PortalData pd = pds.get(0);
+
+        if (!PortalEngine.getInstance().getPlayerPermissionCheck().canDestroy(pd.getConnection_id(), e.getPlayer())) {
+            e.setCancelled(true);
+            String actionbar = ChatColor.LIGHT_PURPLE +  "You are not permitted to destroy that portal!";
+            e.getPlayer().sendActionBar(Component.text(actionbar));
+            return;
+        }
 
         ArrayList<ConnectionData> conns = DBConnection.getConnection(pd.getConnection_id());
 

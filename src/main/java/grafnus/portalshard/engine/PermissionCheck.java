@@ -26,6 +26,9 @@ public class PermissionCheck {
         if (isOwner(cID, player)) {
             return true;
         }
+        if (DBConnection.getConnection(cID).get(0).isFfa()) {
+            return true;
+        }
         PlayerPermsData ppData = DBPlayerPerms.getPlayerPerm(cID, player);
 
         if (ppData != null) {
