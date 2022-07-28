@@ -22,7 +22,7 @@ public final class PortalShard extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BlockPhysicsListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerPortalListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
-        //getServer().getPluginCommand("portal").setExecutor(new BaseCommand());
+        getServer().getPluginCommand("portal").setExecutor(new BaseCommand());
         DataSource.getInstance().initTables();
         PortalEngine.getInstance().start();
 

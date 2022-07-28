@@ -1,6 +1,7 @@
 package grafnus.portalshard.database.tables;
 
 import grafnus.portalshard.database.DataSource;
+import grafnus.portalshard.database.data.PlayerPermsData;
 import grafnus.portalshard.database.data.PortalData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,7 +14,7 @@ import java.util.UUID;
 
 public class DBPlayerPerms extends DataTable {
     public DBPlayerPerms() {
-        super("Portal", "CREATE TABLE IF NOT EXISTS `player_perms` (" +
+        super("PlayerPerms", "CREATE TABLE IF NOT EXISTS `player_perms` (" +
                 "`id` FLOAT NOT NULL AUTO_INCREMENT," +
                 "`connection_id` FLOAT NOT NULL," +
                 "`uuid` VARCHAR(255) NOT NULL," +
@@ -21,61 +22,33 @@ public class DBPlayerPerms extends DataTable {
                 "`charge` BOOLEAN NOT NULL," +
                 "`upgrade` BOOLEAN NOT NULL," +
                 "`destroy` BOOLEAN NOT NULL," +
-                "`created_by` VARCHAR(255) NOT NULL," +
                 "`created` DATETIME," +
                 "PRIMARY KEY (`id`)" +
                 ");");
     }
 
-    public static float addPortal(PortalData data) {
-        String query = "INSERT INTO `portal`" +
-                "(`connection_id`, `world`, `x`, `y`, `z`) " +
+    public static void addPlayerPerm(PlayerPermsData data) {
+        String query = "INSERT INTO `player_perms`" +
+                "(`connection_id`, `uuid`, `use`, `charge`, `upgrade`, `destroy`) " +
                 "VALUES (?,?,?,?,?,?)";
         DataSource.getInstance().execute( (conn) -> {
             PreparedStatement p = conn.prepareStatement(query);
             p.setFloat(1, data.getConnection_id());
-            p.setString(2, data.getLoc().getWorld().getName());
-            p.setFloat(3, data.getLoc().getBlockX());
-            p.setFloat(4, data.getLoc().getBlockY());
-            p.setFloat(5, data.getLoc().getBlockZ());
+            p.setString(2, data.getPlayer().getUniqueId().toString());
+            p.setBoolean(3, data.isUse());
+            p.setBoolean(4, data.isCharge());
+            p.setBoolean(5, data.isUpgrade());
+            p.setBoolean(6, data.isDestroy());
 
             int status = p.executeUpdate();
             return null;
         });
-
-        return getPortalID(data);
     }
 
-    public static ArrayList<PortalData> getPortal(Location loc) {
-        ArrayList<PortalData> data = new ArrayList<>();
+    public static ArrayList<PlayerPermsData> getPlayerPerms(float cID) {
+        ArrayList<PlayerPermsData> data = new ArrayList<>();
 
-        String query = "SELECT `world`, `x`, `y`, `z`, `connection_id` FROM `portal` WHERE `world` = ? AND `x` = ? AND `y` = ? AND `z` = ?;";
-
-        DataSource.getInstance().execute( (conn) -> {
-            PreparedStatement p = conn.prepareStatement(query);
-            p.setString(1, loc.getWorld().getName());
-            p.setDouble(2, loc.getBlockX());
-            p.setDouble(3, loc.getBlockY());
-            p.setDouble(4, loc.getBlockZ());
-            ResultSet rs = p.executeQuery();
-            while (rs.next()) {
-                float cID = rs.getFloat("connection_id");
-
-                Location location = new Location(Bukkit.getWorld(rs.getString("world")), rs.getFloat("x"), rs.getFloat("y"), rs.getFloat("z"));
-                PortalData pd = new PortalData(cID, location);
-                data.add(pd);
-            }
-            return null;
-        });
-        return data;
-    }
-
-
-
-    public static ArrayList<PortalData> getPortalByConnID(float cID) {
-        ArrayList<PortalData> data = new ArrayList<>();
-
-        String query = "SELECT `world`, `x`, `y`, `z`, `connection_id`, `created_by` FROM `portal` WHERE `connection_id` = ?;";
+        String query = "SELECT `uuid`, `use`, `charge`, `upgrade`, `destroy` FROM `player_perms` WHERE `connection_id` = ?;";
 
         DataSource.getInstance().execute( (conn) -> {
             PreparedStatement p = conn.prepareStatement(query);
@@ -83,60 +56,109 @@ public class DBPlayerPerms extends DataTable {
             ResultSet rs = p.executeQuery();
             while (rs.next()) {
 
-                Location location = new Location(Bukkit.getWorld(rs.getString("world")), rs.getFloat("x"), rs.getFloat("y"), rs.getFloat("z"));
-                PortalData pd = new PortalData(rs.getFloat("connection_id"), location);
-                data.add(pd);
+                String uuid = rs.getString("uuid");
+                OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
+
+                boolean use = rs.getBoolean("use");
+                boolean charge = rs.getBoolean("charge");
+                boolean upgrade = rs.getBoolean("upgrade");
+                boolean destroy = rs.getBoolean("destroy");
+
+                PlayerPermsData d = new PlayerPermsData(cID, player, use, charge, upgrade, destroy);
+
+                data.add(d);
             }
             return null;
         });
         return data;
     }
 
-    public static float getPortalID(PortalData data) {
-        String queryPortalID = "SELECT `id` FROM `portal` WHERE `connection_id` = ? AND `world` = ? AND `x` = ? AND `y` = ? AND `z` = ? AND `created_by` = ?;";
-        float[] id = new float[1];
-        DataSource.getInstance().execute( (conn -> {
-            PreparedStatement p = conn.prepareStatement(queryPortalID);
-            p.setFloat(1, data.getConnection_id());
-            p.setString(2, data.getLoc().getWorld().getName());
-            p.setFloat(3, data.getLoc().getBlockX());
-            p.setFloat(4, data.getLoc().getBlockY());
-            p.setFloat(5, data.getLoc().getBlockZ());
-            ResultSet rs = p.executeQuery();
-            while(rs.next()) {
-                id[0] = rs.getFloat("id");
+    public static PlayerPermsData getPlayerPerm(float cID, OfflinePlayer player) {
+        ArrayList<PlayerPermsData> data = getPlayerPerms(cID);
+
+        for (PlayerPermsData d : data) {
+            if (d.getPlayer().equals(player)) {
+                return d;
             }
-            return null;
-        }));
-        return id[0];
+        }
+        return null;
     }
 
-    public static float getConnectionID(PortalData data) {
-        String queryPortalID = "SELECT `connection_id` FROM `portal` WHERE `world` = ? AND `x` = ? AND `y` = ? AND `z` = ? AND `created_by` = ?;";
-        float[] id = new float[1];
-        DataSource.getInstance().execute( (conn -> {
-            PreparedStatement p = conn.prepareStatement(queryPortalID);
-            p.setString(1, data.getLoc().getWorld().getName());
-            p.setFloat(2, data.getLoc().getBlockX());
-            p.setFloat(3, data.getLoc().getBlockY());
-            p.setFloat(4, data.getLoc().getBlockZ());
-            ResultSet rs = p.executeQuery();
-            while(rs.next()) {
-                id[0] = rs.getFloat("id");
-            }
-            return null;
-        }));
-        return id[0];
+    public static PlayerPermsData addIfNotPresent(float cID, OfflinePlayer player) {
+        PlayerPermsData data = getPlayerPerm(cID, player);
+        if (data == null) {
+            data = new PlayerPermsData(cID, player, false, false, false, false);
+            addPlayerPerm(data);
+        }
+        return data;
     }
 
-    public static void removePortal(Location loc) {
-        String query = "DELETE FROM `portal` WHERE `world` = ? AND `x` = ? AND `y` = ? AND `z` = ?";
+    public static void setUse(float cID, OfflinePlayer player, boolean use) {
+        PlayerPermsData data = addIfNotPresent(cID, player);
+
+        String update = "UPDATE `player_perms` SET `use` = ? WHERE `connection_id` = ? AND `uuid` = ?;";
+        DataSource.getInstance().execute( (conn) -> {
+            PreparedStatement p = conn.prepareStatement(update);
+            p.setBoolean(1, use);
+            p.setFloat(2, cID);
+            p.setString(3, player.getUniqueId().toString());
+            p.executeUpdate();
+            return null;
+        });
+
+    }
+
+    public static void setCharge(float cID, OfflinePlayer player, boolean charge) {
+        PlayerPermsData data = addIfNotPresent(cID, player);
+
+        String update = "UPDATE `player_perms` SET `charge` = ? WHERE `connection_id` = ? AND `uuid` = ?;";
+        DataSource.getInstance().execute( (conn) -> {
+            PreparedStatement p = conn.prepareStatement(update);
+            p.setBoolean(1, charge);
+            p.setFloat(2, cID);
+            p.setString(3, player.getUniqueId().toString());
+            p.executeUpdate();
+            return null;
+        });
+
+    }
+
+    public static void setUpgrade(float cID, OfflinePlayer player, boolean upgrade) {
+        PlayerPermsData data = addIfNotPresent(cID, player);
+
+        String update = "UPDATE `player_perms` SET `upgrade` = ? WHERE `connection_id` = ? AND `uuid` = ?;";
+        DataSource.getInstance().execute( (conn) -> {
+            PreparedStatement p = conn.prepareStatement(update);
+            p.setBoolean(1, upgrade);
+            p.setFloat(2, cID);
+            p.setString(3, player.getUniqueId().toString());
+            p.executeUpdate();
+            return null;
+        });
+
+    }
+
+    public static void setDestroy(float cID, OfflinePlayer player, boolean destroy) {
+        PlayerPermsData data = addIfNotPresent(cID, player);
+
+        String update = "UPDATE `player_perms` SET `destroy` = ? WHERE `connection_id` = ? AND `uuid` = ?;";
+        DataSource.getInstance().execute( (conn) -> {
+            PreparedStatement p = conn.prepareStatement(update);
+            p.setBoolean(1, destroy);
+            p.setFloat(2, cID);
+            p.setString(3, player.getUniqueId().toString());
+            p.executeUpdate();
+            return null;
+        });
+
+    }
+
+    public static void removePortal(float cID, OfflinePlayer player) {
+        String query = "DELETE FROM `player_perms` WHERE `connection_id` = ? AND `uuid` = ?;";
         DataSource.getInstance().execute( (conn) -> {
             PreparedStatement p = conn.prepareStatement(query);
-            p.setString(1, loc.getWorld().getName());
-            p.setFloat(2, loc.getBlockX());
-            p.setFloat(3, loc.getBlockY());
-            p.setFloat(4, loc.getBlockZ());
+            p.setFloat(1, cID);
+            p.setString(2, player.getUniqueId().toString());
 
             int status = p.executeUpdate();
             return null;

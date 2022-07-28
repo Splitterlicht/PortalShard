@@ -6,6 +6,7 @@ import grafnus.portalshard.database.data.PortalData;
 import grafnus.portalshard.database.tables.DBConnection;
 import grafnus.portalshard.database.tables.DBPortal;
 import grafnus.portalshard.engine.Converter;
+import grafnus.portalshard.engine.PortalEngine;
 import grafnus.portalshard.engine.task.TaskFactory;
 import grafnus.portalshard.engine.task.UpdatePortalCharges;
 import grafnus.portalshard.gui.PortalMenu;
@@ -40,6 +41,8 @@ public class PlayerInteractRespawnAnchor implements IEvent {
             return;
         if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.ENDER_PEARL))
             chargePortal(e);
+        if (PortalEngine.getInstance().getPostCommandHandler().checkForInteractionAndExecute(e.getPlayer(), e.getClickedBlock()))
+            e.setCancelled(true);
         else
             openMenu(e);
         return;

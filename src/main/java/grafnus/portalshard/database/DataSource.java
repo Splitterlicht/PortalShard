@@ -81,7 +81,7 @@ public class DataSource {
 
         new DBConnection();
         new DBPortal();
-
+        new DBPlayerPerms();
         //PortalTable.createTable();
         //ConnectionTable.createTable();
     }

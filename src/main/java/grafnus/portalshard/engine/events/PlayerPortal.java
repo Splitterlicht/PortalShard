@@ -6,6 +6,7 @@ import grafnus.portalshard.database.data.PortalData;
 import grafnus.portalshard.database.tables.DBConnection;
 import grafnus.portalshard.database.tables.DBPortal;
 import grafnus.portalshard.engine.Converter;
+import grafnus.portalshard.engine.PortalEngine;
 import grafnus.portalshard.engine.task.TaskFactory;
 import grafnus.portalshard.engine.task.UpdatePortalCharges;
 import grafnus.portalshard.listeners.PlayerPortalListener;
@@ -65,7 +66,7 @@ public class PlayerPortal implements IEvent {
             }
 
             ConnectionData c = cd.get(0);
-            if (!player.getUniqueId().toString().equals(c.getPlayer().getUniqueId().toString())) {
+            if (!PortalEngine.getInstance().getPlayerPermissionCheck().canUse(DBConnection.getConnectionID(c.getUuid()), player)) {
                 String errorActionBar = ChatColor.LIGHT_PURPLE +  "You are not permitted to use the portal!";
 
                 player.sendActionBar(Component.text(errorActionBar));
