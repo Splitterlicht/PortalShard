@@ -62,9 +62,6 @@ public class RespawnAnchorBreak implements IEvent {
             return;
         }
 
-        if (!conns.get(0).getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId()))
-            return;
-
         DBPortal.removePortal(source);
         //PortalTable.removePortal(pd.getUuid(), source);
 

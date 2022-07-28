@@ -13,6 +13,7 @@ import grafnus.portalshard.gui.PortalMenu;
 import grafnus.portalshard.util.placement.RelativePosition;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
@@ -22,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class PlayerInteractRespawnAnchor implements IEvent {
 
@@ -39,12 +41,13 @@ public class PlayerInteractRespawnAnchor implements IEvent {
             return;
         if (!doChecks(e))
             return;
-        if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.ENDER_PEARL))
-            chargePortal(e);
         if (PortalEngine.getInstance().getPostCommandHandler().checkForInteractionAndExecute(e.getPlayer(), e.getClickedBlock()))
             e.setCancelled(true);
+        else if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.ENDER_PEARL))
+            chargePortal(e);
         else
             openMenu(e);
+
         return;
     }
 
@@ -70,10 +73,13 @@ public class PlayerInteractRespawnAnchor implements IEvent {
         event.setCancelled(true);
 
         if (!PortalEngine.getInstance().getPlayerPermissionCheck().canCharge(portals.get(0).getConnection_id(), event.getPlayer())) {
+            Bukkit.getLogger().log(Level.INFO, "Open here2!");
+            openMenu(event);
             return;
         }
 
         if (conns.get(0).getCharges() >= 20) {
+            Bukkit.getLogger().log(Level.INFO, "Open here3!");
             openMenu(event);
             return;
         }

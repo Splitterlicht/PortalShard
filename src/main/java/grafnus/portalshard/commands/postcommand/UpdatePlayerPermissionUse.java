@@ -6,6 +6,7 @@ import grafnus.portalshard.database.tables.DBConnection;
 import grafnus.portalshard.database.tables.DBPlayerPerms;
 import grafnus.portalshard.database.tables.DBPortal;
 import grafnus.portalshard.engine.PortalEngine;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -41,7 +42,7 @@ public class UpdatePlayerPermissionUse extends AbstractPostCommandInteraction {
         }
 
         if (!PortalEngine.getInstance().getPlayerPermissionCheck().isOwner(cID, getSender())) {
-            getSender().sendMessage("You need to be the Owner of the Portal to change it's settings!");
+            getSender().sendMessage(ChatColor.DARK_PURPLE + "[Portal]" + ChatColor.LIGHT_PURPLE + " You need to be the Owner of the Portal to change it's settings!");
             return;
         }
 
@@ -50,7 +51,7 @@ public class UpdatePlayerPermissionUse extends AbstractPostCommandInteraction {
         DBPlayerPerms.addIfNotPresent(cID, getSender());
         DBPlayerPerms.setUse(cID, getTarget(), isValue());
 
-        getSender().sendMessage("You set the permission to use the portal for " + getTarget().getName() + " to " + Boolean.toString(value));
+        getSender().sendMessage(ChatColor.DARK_PURPLE + "[Portal]" + ChatColor.LIGHT_PURPLE + " You set the " + ChatColor.RED + "USE" + ChatColor.LIGHT_PURPLE + " portal permission for " + ChatColor.GOLD + getTarget().getName() + ChatColor.LIGHT_PURPLE + " to " + ChatColor.RED + Boolean.toString(value));
         return;
     }
 

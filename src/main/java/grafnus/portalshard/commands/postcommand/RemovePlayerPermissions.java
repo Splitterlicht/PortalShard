@@ -6,6 +6,7 @@ import grafnus.portalshard.database.tables.DBConnection;
 import grafnus.portalshard.database.tables.DBPlayerPerms;
 import grafnus.portalshard.database.tables.DBPortal;
 import grafnus.portalshard.engine.PortalEngine;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -19,12 +20,10 @@ import java.util.ArrayList;
 public class RemovePlayerPermissions extends AbstractPostCommandInteraction {
 
     private OfflinePlayer target;
-    private boolean value;
 
-    public RemovePlayerPermissions(Player sender, OfflinePlayer target, boolean value) {
+    public RemovePlayerPermissions(Player sender, OfflinePlayer target) {
         super(sender, Material.RESPAWN_ANCHOR);
         this.target = target;
-        this.value = value;
     }
 
     @Override
@@ -42,7 +41,7 @@ public class RemovePlayerPermissions extends AbstractPostCommandInteraction {
         }
 
         if (!PortalEngine.getInstance().getPlayerPermissionCheck().isOwner(cID, getSender())) {
-            getSender().sendMessage("You need to be the Owner of the Portal to change it's settings!");
+            getSender().sendMessage(ChatColor.DARK_PURPLE + "[Portal]" + ChatColor.LIGHT_PURPLE + " You need to be the Owner of the Portal to change it's settings!");
             return;
         }
 
@@ -51,15 +50,11 @@ public class RemovePlayerPermissions extends AbstractPostCommandInteraction {
         DBPlayerPerms.addIfNotPresent(cID, getSender());
         DBPlayerPerms.removePortal(cID, getTarget());
 
-        getSender().sendMessage("You removed " + getTarget().getName() + " from your portal!");
+        getSender().sendMessage(ChatColor.DARK_PURPLE + "[Portal]" + ChatColor.LIGHT_PURPLE + " You removed " + ChatColor.GOLD + getTarget().getName() + ChatColor.LIGHT_PURPLE + " from your portal!");
         return;
     }
 
     public OfflinePlayer getTarget() {
         return target;
-    }
-
-    public boolean isValue() {
-        return value;
     }
 }

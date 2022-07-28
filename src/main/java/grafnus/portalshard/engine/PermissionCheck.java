@@ -45,6 +45,10 @@ public class PermissionCheck {
         }
         PlayerPermsData ppData = DBPlayerPerms.getPlayerPerm(cID, player);
 
+        if (DBConnection.getConnection(cID).get(0).isFfa()) {
+            return true;
+        }
+
         if (ppData != null) {
             if (ppData.isCharge()) {
                 return true;

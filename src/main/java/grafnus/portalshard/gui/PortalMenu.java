@@ -51,7 +51,7 @@ public class PortalMenu extends Gui {
         if (isFirstDraw()) {
             BUTTONS.apply(this);
 
-            getPlayer().sendMessage(connection.getPlayer().getUniqueId().toString() + "::" + getPlayer().getUniqueId().toString());
+            //getPlayer().sendMessage(connection.getPlayer().getUniqueId().toString() + "::" + getPlayer().getUniqueId().toString());
 
             if (connection.getPlayer().getUniqueId().equals(getPlayer().getUniqueId())) {
                 this.setItem(11, ItemStackBuilder.of(Material.BARRIER)

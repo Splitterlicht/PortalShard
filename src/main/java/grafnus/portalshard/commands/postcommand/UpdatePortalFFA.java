@@ -6,6 +6,7 @@ import grafnus.portalshard.database.tables.DBConnection;
 import grafnus.portalshard.database.tables.DBPlayerPerms;
 import grafnus.portalshard.database.tables.DBPortal;
 import grafnus.portalshard.engine.PortalEngine;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -24,10 +25,6 @@ public class UpdatePortalFFA extends AbstractPostCommandInteraction {
         this.value = value;
     }
 
-    public UpdatePortalFFA(Player sender, Material material) {
-        super(sender, material);
-    }
-
     @Override
     protected void execute(Block anchor) {
         Location portalSource = anchor.getLocation().add(new Vector(0, -2, 0));
@@ -43,7 +40,7 @@ public class UpdatePortalFFA extends AbstractPostCommandInteraction {
         }
 
         if (!PortalEngine.getInstance().getPlayerPermissionCheck().isOwner(cID, getSender())) {
-            getSender().sendMessage("You need to be the Owner of the Portal to change it's settings!");
+            getSender().sendMessage(ChatColor.DARK_PURPLE + "[Portal]" + ChatColor.LIGHT_PURPLE + " You need to be the Owner of the Portal to change it's settings!");
             return;
         }
 
@@ -51,7 +48,7 @@ public class UpdatePortalFFA extends AbstractPostCommandInteraction {
 
         DBConnection.updateFFA(conn.getUuid(), value);
 
-        getSender().sendMessage("You set the Free For All option of your portal to " + Boolean.toString(value));
+        getSender().sendMessage(ChatColor.DARK_PURPLE + "[Portal]" + ChatColor.LIGHT_PURPLE + " You set the " + ChatColor.RED + "Free For All" + ChatColor.LIGHT_PURPLE + " option of your portal to " + ChatColor.RED + Boolean.toString(value));
         return;
     }
 
