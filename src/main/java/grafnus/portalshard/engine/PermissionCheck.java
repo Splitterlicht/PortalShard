@@ -40,6 +40,7 @@ public class PermissionCheck {
     }
 
     public boolean canCharge(float cID, Player player) {
+
         if (isOwner(cID, player)) {
             return true;
         }
@@ -50,11 +51,11 @@ public class PermissionCheck {
         }
 
         if (ppData != null) {
-            if (ppData.isCharge()) {
-                return true;
+            if (!ppData.isCharge()) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public boolean canUpgrade(float cID, Player player) {

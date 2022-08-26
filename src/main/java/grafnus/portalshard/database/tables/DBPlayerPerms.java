@@ -87,7 +87,7 @@ public class DBPlayerPerms extends DataTable {
     public static PlayerPermsData addIfNotPresent(float cID, OfflinePlayer player) {
         PlayerPermsData data = getPlayerPerm(cID, player);
         if (data == null) {
-            data = new PlayerPermsData(cID, player, false, false, false, false);
+            data = new PlayerPermsData(cID, player, false, true, false, false);
             addPlayerPerm(data);
         }
         return data;
