@@ -24,7 +24,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '17'
-      - name: Build with Gradle
+      - name: Build with Maven
         run: mvn -B package --file pom.xml
       - name: Upload Plugin jar
         uses: actions/upload-artifact@v3
