@@ -28,6 +28,13 @@ public final class PortalShard extends JavaPlugin {
 
     }
 
+    public void loadDependencies() {
+        //Canvas
+        Bukkit.getPluginManager().registerEvents(new MenuFunctionListener(), plugin);
+
+
+    }
+
     @Override
     public void onDisable() {
         // Plugin shutdown logic
