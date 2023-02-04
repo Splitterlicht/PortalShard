@@ -33,7 +33,6 @@ public class Listener {
                                 return;
 
                             if (loc.distance(p.getLocation()) >= 2) {
-
                                 PlayerPortalListener.lastTeleportedTo.remove(p);
                                 PlayerPortalListener.recentlyTeleported.remove(p);
                             }

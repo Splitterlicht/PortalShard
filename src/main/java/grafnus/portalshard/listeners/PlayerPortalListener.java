@@ -39,7 +39,6 @@ public class PlayerPortalListener implements Listener {
 
     @EventHandler
     public void onEntityPortalExit(EntityPortalExitEvent event) {
-        Bukkit.getLogger().log(Level.INFO, "Exit!");
         if (event.getEntity() instanceof Player) {
             if (recentlyTeleported.contains((Player) event.getEntity())) {
                 recentlyTeleported.remove((Player) event.getEntity());
