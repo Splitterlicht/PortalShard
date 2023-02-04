@@ -32,7 +32,7 @@ public class Listener {
                             if (loc == null)
                                 return;
 
-                            if ((p.getLocation().getBlockX() != loc.getBlockX()) || (p.getLocation().getBlockY() != loc.getBlockY()) || (p.getLocation().getBlockZ() != loc.getBlockZ())) {
+                            if (loc.distance(p.getLocation()) >= 2) {
                                 PlayerPortalListener.lastTeleportedTo.remove(p);
                                 PlayerPortalListener.recentlyTeleported.remove(p);
                             }

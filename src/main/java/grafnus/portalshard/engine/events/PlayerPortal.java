@@ -48,6 +48,7 @@ public class PlayerPortal implements IEvent {
 
         ArrayList<PortalData> data = DBPortal.getPortal(loc);
 
+        /*
         BukkitRunnable remove = new BukkitRunnable() {
             @Override
             public void run() {
@@ -55,7 +56,7 @@ public class PlayerPortal implements IEvent {
                 PlayerPortalListener.recentlyTeleported.remove(player);
             }
         };
-        remove.runTaskLater(PortalShard.getInstance(), 200);
+        //remove.runTaskLater(PortalShard.getInstance(), 200);*/
 
         if (data.size() == 1) {
             PlayerPortalListener.recentlyTeleported.add(player);
