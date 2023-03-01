@@ -26,6 +26,8 @@ jobs:
           java-version: '17'
       - name: Build with Maven
         run: mvn -B package --file pom.xml
+      - name: Build with Maven
+        run: mvn clean verify sonar:sonar -Dsonar.projectKey=PortalShard -Dsonar.host.url=https://sonarcube.grafnus.de -Dsonar.login=sqp_9b37af6d67c3086c80bbb72cf2214dfd30695187
       - name: Upload Plugin jar
         uses: actions/upload-artifact@v3
         with:
