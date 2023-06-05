@@ -1,5 +1,6 @@
 package grafnus.portalshard.listeners;
 
+import com.sun.jdi.request.DuplicateRequestException;
 import grafnus.portalshard.PortalShard;
 import grafnus.portalshard.engine.PortalEngine;
 import grafnus.portalshard.engine.events.EEvents;
@@ -16,13 +17,15 @@ import org.bukkit.event.entity.EntityPortalExitEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 
 public class PlayerPortalListener implements Listener {
 
-    public static ArrayList<Player> recentlyTeleported = new ArrayList<>();
+    public static HashMap<Player, Instant> recentlyTeleported = new HashMap<>();
     public static HashMap<Player, Location> lastTeleportedTo = new HashMap<>();
 
     @EventHandler
@@ -31,7 +34,7 @@ public class PlayerPortalListener implements Listener {
             return;
         }
         Player p = (Player) event.getEntity();
-        if (!recentlyTeleported.contains(p)) {
+        if (!recentlyTeleported.keySet().contains(p)) {
             PortalEngine.getInstance().listenToEvent(event, EEvents.PLAYER_PORTAL);
         }
 
@@ -40,8 +43,11 @@ public class PlayerPortalListener implements Listener {
     @EventHandler
     public void onEntityPortalExit(EntityPortalExitEvent event) {
         if (event.getEntity() instanceof Player) {
-            if (recentlyTeleported.contains((Player) event.getEntity())) {
-                recentlyTeleported.remove((Player) event.getEntity());
+            if (recentlyTeleported.keySet().contains((Player) event.getEntity())) {
+                if (Duration.between(recentlyTeleported.get((Player) event.getEntity()), Instant.now()).toSeconds() >= 10) {
+                    recentlyTeleported.remove((Player) event.getEntity());
+                    PlayerPortalListener.lastTeleportedTo.remove((Player) event.getEntity());
+                }
             }
         }
     }

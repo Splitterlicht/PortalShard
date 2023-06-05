@@ -1,10 +1,13 @@
 package grafnus.portalshard;
 
 import grafnus.portalshard.commands.BaseCommand;
+import grafnus.portalshard.craft.CraftingListener;
 import grafnus.portalshard.database.DataSource;
 import grafnus.portalshard.engine.PortalEngine;
 import grafnus.portalshard.listeners.*;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.ipvp.canvas.MenuFunctionListener;
 
 public final class PortalShard extends JavaPlugin {
 
@@ -22,7 +25,9 @@ public final class PortalShard extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BlockPhysicsListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerPortalListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
+        getServer().getPluginManager().registerEvents(new CraftingListener(), this);
         getServer().getPluginCommand("portal").setExecutor(new BaseCommand());
+        loadDependencies();
         DataSource.getInstance().initTables();
         PortalEngine.getInstance().start();
 
@@ -30,7 +35,7 @@ public final class PortalShard extends JavaPlugin {
 
     public void loadDependencies() {
         //Canvas
-        Bukkit.getPluginManager().registerEvents(new MenuFunctionListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new MenuFunctionListener(), PortalShard.getInstance());
 
 
     }

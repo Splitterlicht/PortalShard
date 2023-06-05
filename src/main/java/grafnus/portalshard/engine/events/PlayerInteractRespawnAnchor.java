@@ -10,10 +10,15 @@ import grafnus.portalshard.engine.PortalEngine;
 import grafnus.portalshard.engine.task.TaskFactory;
 import grafnus.portalshard.engine.task.UpdatePortalCharges;
 import grafnus.portalshard.gui.PortalMenu;
+import grafnus.portalshard.gui.PortalOverviewUI;
+import grafnus.portalshard.items.ITEMS;
+import grafnus.portalshard.items.ItemFactory;
+import grafnus.portalshard.items.ItemHandler;
 import grafnus.portalshard.util.placement.RelativePosition;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
@@ -37,18 +42,78 @@ public class PlayerInteractRespawnAnchor implements IEvent {
     @Override
     public void listen(Event event) {
         PlayerInteractEvent e = Converter.convert(event, PlayerInteractEvent.class);
+
+        ArrayList<ItemStack> upgrades = new ArrayList<>();
+        upgrades.add(ItemFactory.buildItemFromTemplate(ITEMS.FIRST_UPGRADE));
+        upgrades.add(ItemFactory.buildItemFromTemplate(ITEMS.SECOND_UPGRADE));
+        upgrades.add(ItemFactory.buildItemFromTemplate(ITEMS.THIRD_UPGRADE));
+
+        ItemStack itemInHand = new ItemStack(e.getPlayer().getInventory().getItemInMainHand());
+        itemInHand.setAmount(1);
+
+        ITEMS upgrade = ItemHandler.getUpgradeItem(itemInHand);
+
         if (e == null)
             return;
         if (!doChecks(e))
             return;
         if (PortalEngine.getInstance().getPostCommandHandler().checkForInteractionAndExecute(e.getPlayer(), e.getClickedBlock()))
             e.setCancelled(true);
-        else if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.ENDER_PEARL))
+        else if (itemInHand.getType().equals(Material.ENDER_PEARL))
             chargePortal(e);
+        else if (upgrade != null)
+            tryPortalUpgrade(e, itemInHand, upgrade);
         else
             openMenu(e);
 
         return;
+    }
+
+    private void tryPortalUpgrade(PlayerInteractEvent event, ItemStack itemInHand, ITEMS upgrade) {
+
+        Bukkit.getLogger().log(Level.INFO, "Debug: ITEMS upgrade: " + upgrade.toString());
+
+        Location loc = RelativePosition.getLocationBelowN(event.getClickedBlock().getLocation(), 2);
+
+        ArrayList<PortalData> portals = DBPortal.getPortal(loc);
+        if (portals.size() <= 0)
+            return;
+
+        ArrayList<ConnectionData> conns = DBConnection.getConnection(portals.get(0).getConnection_id());
+        if (conns.size() <= 0)
+            return;
+
+        event.setCancelled(true);
+
+        if (!PortalEngine.getInstance().getPlayerPermissionCheck().canUpgrade(portals.get(0).getConnection_id(), event.getPlayer())) {
+            openMenu(event);
+            return;
+        }
+
+
+        int requiredLevel = 0;
+
+        Bukkit.getLogger().log(Level.INFO, upgrade.toString());
+
+        if (upgrade.equals(ITEMS.THIRD_UPGRADE)) {
+            requiredLevel = 3;
+        } else if (upgrade.equals(ITEMS.SECOND_UPGRADE)) {
+            requiredLevel = 2;
+        } else {
+            requiredLevel = 1;
+        }
+
+        if (conns.get(0).getLevel() != requiredLevel) {
+            String actionbar = ChatColor.LIGHT_PURPLE +  "Upgrade not possible! Required Level: " + ChatColor.GOLD + requiredLevel + ChatColor.LIGHT_PURPLE + " Portal Level: " + ChatColor.GOLD + conns.get(0).getLevel();
+            event.getPlayer().sendActionBar(Component.text(actionbar));
+            return;
+        }
+
+        DBConnection.updateLevel(conns.get(0).getUuid(), (requiredLevel + 1));
+        String actionbar = ChatColor.LIGHT_PURPLE +  "Upgraded! Portal Level: " + ChatColor.GOLD + (conns.get(0).getLevel() + 1);
+        event.getPlayer().sendActionBar(Component.text(actionbar));
+
+        event.getPlayer().getInventory().getItemInMainHand().setAmount((event.getPlayer().getInventory().getItemInMainHand().getAmount() - 1));
     }
 
     private boolean doChecks(PlayerInteractEvent event) {
@@ -84,7 +149,9 @@ public class PlayerInteractRespawnAnchor implements IEvent {
             return;
         }
 
-        int newCharges = conns.get(0).getCharges() + 5;
+        int level = conns.get(0).getLevel();
+
+        int newCharges = (int) (conns.get(0).getCharges() + (2.5 * Math.pow(2, level)));
         if (newCharges > 20) {
             newCharges = 20;
         }
@@ -115,7 +182,15 @@ public class PlayerInteractRespawnAnchor implements IEvent {
     }
 
     private void openMenu(PlayerInteractEvent event) {
+
         Location loc = RelativePosition.getLocationBelowN(event.getClickedBlock().getLocation(), 2);
+        ArrayList<PortalData> portals = DBPortal.getPortal(loc);
+        if (portals.size() <= 0)
+            return;
+        PortalOverviewUI ui = new PortalOverviewUI(event.getPlayer(), portals.get(0));
+        ui.openMenu();
+        event.setCancelled(true);
+        /*Location loc = RelativePosition.getLocationBelowN(event.getClickedBlock().getLocation(), 2);
 
         ArrayList<PortalData> portals = DBPortal.getPortal(loc);
         if (portals.size() <= 0)
@@ -125,5 +200,6 @@ public class PlayerInteractRespawnAnchor implements IEvent {
         PortalMenu menu = new PortalMenu(event.getPlayer(), portals.get(0));
         menu.open();
         //event.getPlayer().sendActionBar(Component.text(org.bukkit.ChatColor.LIGHT_PURPLE + "Here would come the Menu"));
+        */
     }
 }
