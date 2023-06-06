@@ -44,4 +44,27 @@ public class ItemHandler {
         return true;
     }
 
+    public static ITEMS getUpgradeItem(ItemStack item) {
+        ItemStack original = new ItemStack(item);
+        original.setAmount(1);
+        ItemStack compare = ItemFactory.buildItemFromTemplate(ITEMS.FIRST_UPGRADE);
+
+        if (compare.equals(original)) {
+            return ITEMS.FIRST_UPGRADE;
+        }
+
+        compare = ItemFactory.buildItemFromTemplate(ITEMS.SECOND_UPGRADE);
+
+        if (compare.equals(original)) {
+            return ITEMS.SECOND_UPGRADE;
+        }
+
+        compare = ItemFactory.buildItemFromTemplate(ITEMS.THIRD_UPGRADE);
+
+        if (compare.equals(original)) {
+            return ITEMS.THIRD_UPGRADE;
+        }
+        return null;
+    }
+
 }

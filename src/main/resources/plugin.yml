@@ -8,5 +8,3 @@ depend: [helper]
 authors: [ Grafnus ]
 description: Teleport to your most important locations via portal
 commands:
-  portal:
-    description: portal util

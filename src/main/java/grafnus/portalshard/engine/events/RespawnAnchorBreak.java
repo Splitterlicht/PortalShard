@@ -65,7 +65,7 @@ public class RespawnAnchorBreak implements IEvent {
         DBPortal.removePortal(source);
         //PortalTable.removePortal(pd.getUuid(), source);
 
-        ItemStack item = ItemFactory.buildItem(ITEMS.KEY, DBConnection.getConnection(pd.getConnection_id()).get(0).getUuid(), e.getPlayer());
+        ItemStack item = ItemFactory.buildKey(DBConnection.getConnection(pd.getConnection_id()).get(0).getUuid());
 
         e.setDropItems(false);
         e.getBlock().getWorld().dropItemNaturally(bl, item);

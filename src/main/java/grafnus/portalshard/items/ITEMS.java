@@ -4,9 +4,9 @@ import org.bukkit.Material;
 
 public enum ITEMS {
     KEY(Material.AMETHYST_CLUSTER, "Portal Key", new String[]{"This Key connects two portals", "with each other by placing them", "inside.", "=====[ID]====="}, true),
-    FIRST_UPGRADE(Material.AMETHYST_SHARD, "Upgrade", new String[]{"Bla", "Bla"}, true),
-    SECOND_UPGRADE(Material.AMETHYST_SHARD, "Upgrade", new String[]{"Bla", "Bla"}, true),
-    THIRD_UPGRADE(Material.AMETHYST_SHARD, "Upgrade", new String[]{"Bla", "Bla"}, true);
+    FIRST_UPGRADE(Material.SMALL_AMETHYST_BUD, "Portal Upgrade 1", new String[]{"This upgrades one portal to Level 2", "That Portal only need two Enderperls", "to fully recharge!"}, true),
+    SECOND_UPGRADE(Material.MEDIUM_AMETHYST_BUD, "Portal Upgrade 2", new String[]{"This upgrades one portal to Level 3", "That Portal only need one Enderperls", "to fully recharge!"}, true),
+    THIRD_UPGRADE(Material.LARGE_AMETHYST_BUD, "Portal Upgrade 3", new String[]{"This upgrades one portal to Level 4", "That Portal does not need to be recharged!"}, true);
 
 
     private Material material;

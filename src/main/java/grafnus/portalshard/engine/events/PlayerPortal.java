@@ -1,11 +1,13 @@
 package grafnus.portalshard.engine.events;
 
+import grafnus.portalshard.PERMISSION;
 import grafnus.portalshard.PortalShard;
 import grafnus.portalshard.database.data.ConnectionData;
 import grafnus.portalshard.database.data.PortalData;
 import grafnus.portalshard.database.tables.DBConnection;
 import grafnus.portalshard.database.tables.DBPortal;
 import grafnus.portalshard.engine.Converter;
+import grafnus.portalshard.engine.PermissionCheck;
 import grafnus.portalshard.engine.PortalEngine;
 import grafnus.portalshard.engine.task.TaskFactory;
 import grafnus.portalshard.engine.task.UpdatePortalCharges;
@@ -24,6 +26,8 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
@@ -48,18 +52,22 @@ public class PlayerPortal implements IEvent {
 
         ArrayList<PortalData> data = DBPortal.getPortal(loc);
 
-        /*
+
         BukkitRunnable remove = new BukkitRunnable() {
             @Override
             public void run() {
-                PlayerPortalListener.lastTeleportedTo.remove(player);
-                PlayerPortalListener.recentlyTeleported.remove(player);
+                if (!PlayerPortalListener.recentlyTeleported.keySet().contains(player)) {
+                    return;
+                }
+                if (Duration.between(PlayerPortalListener.recentlyTeleported.get(player), Instant.now()).toSeconds() >= 10) {
+                    PlayerPortalListener.recentlyTeleported.remove(player);
+                    PlayerPortalListener.lastTeleportedTo.remove(player);
+                }
             }
         };
-        //remove.runTaskLater(PortalShard.getInstance(), 200);*/
+        remove.runTaskLater(PortalShard.getInstance(), 200);
 
         if (data.size() == 1) {
-            PlayerPortalListener.recentlyTeleported.add(player);
             PortalData portal = data.get(0);
             ArrayList<ConnectionData> cd = DBConnection.getConnection(portal.getConnection_id());
             if (cd.size() <= 0) {
@@ -89,11 +97,13 @@ public class PlayerPortal implements IEvent {
                 player.sendActionBar(Component.text(actionbar));
                 return;
             }
-            DBConnection.updateCharges(c.getUuid(), c.getCharges() - 1);
-
-            String actionbar = ChatColor.LIGHT_PURPLE +  "You have " + ChatColor.GOLD + (c.getCharges() - 1) + ChatColor.LIGHT_PURPLE + " charges left!";
-
-            player.sendActionBar(Component.text(actionbar));
+            if (c.getLevel() != 4) {
+                if (PortalEngine.getInstance().getPlayerPermissionCheck().canUse(DBConnection.getConnectionID(c.getUuid()), player, false)) {
+                    DBConnection.updateCharges(c.getUuid(), c.getCharges() - 1);
+                    String actionbar = ChatColor.LIGHT_PURPLE +  "You have " + ChatColor.GOLD + (c.getCharges() - 1) + ChatColor.LIGHT_PURPLE + " charges left!";
+                    player.sendActionBar(Component.text(actionbar));
+                }
+            }
 
             for (PortalData d : pair) {
                 UpdatePortalCharges task = new UpdatePortalCharges(d.getLoc());
@@ -106,7 +116,7 @@ public class PlayerPortal implements IEvent {
                     Location dest = p.getLoc().add(new Vector(0.5, 0, 0.5));
                     dest.setYaw(player.getLocation().getYaw());
                     dest.setPitch(player.getLocation().getPitch());
-
+                    PlayerPortalListener.recentlyTeleported.put(player, Instant.now());
                     PlayerPortalListener.lastTeleportedTo.put(player, dest);
                     player.teleport(dest);
                 }

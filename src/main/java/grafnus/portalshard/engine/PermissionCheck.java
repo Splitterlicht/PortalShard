@@ -1,5 +1,6 @@
 package grafnus.portalshard.engine;
 
+import grafnus.portalshard.PERMISSION;
 import grafnus.portalshard.database.data.ConnectionData;
 import grafnus.portalshard.database.data.PlayerPermsData;
 import grafnus.portalshard.database.tables.DBConnection;
@@ -22,7 +23,12 @@ public class PermissionCheck {
         return false;
     }
 
-    public boolean canUse(float cID, Player player) {
+    public boolean canUse(float cID, Player player, boolean adminCheck) {
+        if (adminCheck) {
+            if (PERMISSION.MODERATOR_PORTAL_USE.isAllowed(player)) {
+                return true;
+            }
+        }
         if (isOwner(cID, player)) {
             return true;
         }
@@ -39,8 +45,15 @@ public class PermissionCheck {
         return false;
     }
 
+    public boolean canUse(float cID, Player player) {
+        return canUse(cID, player, true);
+    }
+
     public boolean canCharge(float cID, Player player) {
 
+        if (PERMISSION.MODERATOR_PORTAL_USE.isAllowed(player)) {
+            return true;
+        }
         if (isOwner(cID, player)) {
             return true;
         }
@@ -59,6 +72,10 @@ public class PermissionCheck {
     }
 
     public boolean canUpgrade(float cID, Player player) {
+
+        if (PERMISSION.MODERATOR_PORTAL_USE.isAllowed(player)) {
+            return true;
+        }
         if (isOwner(cID, player)) {
             return true;
         }
@@ -73,6 +90,10 @@ public class PermissionCheck {
     }
 
     public boolean canDestroy(float cID, Player player) {
+
+        if (PERMISSION.MODERATOR_PORTAL_USE.isAllowed(player)) {
+            return true;
+        }
         if (isOwner(cID, player)) {
             return true;
         }
