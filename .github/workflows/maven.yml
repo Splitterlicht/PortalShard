@@ -28,6 +28,7 @@ jobs:
         with:
           repository: IPVP-MC/canvas
           ref: refs/heads/master
+          path: canvas
       - name: install canvas
         run: (cd canvas; mvn clean install)
       - name: Build with Maven
