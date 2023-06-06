@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@master
         with:
           name: IPVP-MC/canvas     <-- clone https://github.com/org1/repo1
-          ref: refs/heads/release
+          ref: refs/heads/master
       - name: install canvas
         run: (cd canvas; mvn clean install)
       - name: Build with Maven
