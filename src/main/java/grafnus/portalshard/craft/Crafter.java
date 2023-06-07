@@ -3,7 +3,6 @@ package grafnus.portalshard.craft;
 import grafnus.portalshard.PortalShard;
 import grafnus.portalshard.items.ITEMS;
 import grafnus.portalshard.items.ItemFactory;
-import me.lucko.helper.Events;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;

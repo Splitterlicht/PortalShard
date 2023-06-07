@@ -6,7 +6,6 @@ import grafnus.portalshard.database.data.PlayerPermsData;
 import grafnus.portalshard.database.data.PortalData;
 import grafnus.portalshard.database.tables.DBConnection;
 import grafnus.portalshard.database.tables.DBPlayerPerms;
-import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Skull;
