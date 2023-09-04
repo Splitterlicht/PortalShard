@@ -24,9 +24,7 @@ public enum PERMISSION {
     }
 
     public boolean isAllowed(Player player) {
-        Bukkit.getLogger().log(Level.INFO, "Checking for " + player.getName());
         if (player.isOp()) {
-            Bukkit.getLogger().log(Level.INFO, "IS OP!");
             return true;
         }
         return player.hasPermission(permission);

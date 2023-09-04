@@ -1,13 +1,11 @@
 package grafnus.portalshard.engine.events;
 
-import grafnus.portalshard.PERMISSION;
 import grafnus.portalshard.PortalShard;
-import grafnus.portalshard.database.data.ConnectionData;
-import grafnus.portalshard.database.data.PortalData;
-import grafnus.portalshard.database.tables.DBConnection;
-import grafnus.portalshard.database.tables.DBPortal;
+import grafnus.portalshard.data.DAO.ConnectionDAO;
+import grafnus.portalshard.data.DAO.PortalDAO;
+import grafnus.portalshard.data.DO.Connection;
+import grafnus.portalshard.data.DO.Portal;
 import grafnus.portalshard.engine.Converter;
-import grafnus.portalshard.engine.PermissionCheck;
 import grafnus.portalshard.engine.PortalEngine;
 import grafnus.portalshard.engine.task.TaskFactory;
 import grafnus.portalshard.engine.task.UpdatePortalCharges;
@@ -16,20 +14,17 @@ import grafnus.portalshard.util.location.LocationChecker;
 import grafnus.portalshard.util.placement.RelativePosition;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityPortalEnterEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.logging.Level;
+import java.util.List;
 
 public class PlayerPortal implements IEvent {
     @Override
@@ -50,7 +45,10 @@ public class PlayerPortal implements IEvent {
         Player player = (Player) e.getEntity();
         Location loc = getSourceLocation(e.getLocation());
 
-        ArrayList<PortalData> data = DBPortal.getPortal(loc);
+        Portal portal = PortalDAO.getPortalByLocation(loc);
+        if (portal == null) {
+            return;
+        }
 
 
         BukkitRunnable remove = new BukkitRunnable() {
@@ -67,59 +65,56 @@ public class PlayerPortal implements IEvent {
         };
         remove.runTaskLater(PortalShard.getInstance(), 200);
 
-        if (data.size() == 1) {
-            PortalData portal = data.get(0);
-            ArrayList<ConnectionData> cd = DBConnection.getConnection(portal.getConnection_id());
-            if (cd.size() <= 0) {
-                return;
-            }
+        Connection connection = portal.getConnection();
+        if (connection == null) {
+            return;
+        }
+        if (!PortalEngine.getInstance().getPlayerPermissionCheck().canUse(connection.getId(), player)) {
+            String errorActionBar = ChatColor.LIGHT_PURPLE +  "You are not permitted to use the portal!";
 
-            ConnectionData c = cd.get(0);
-            if (!PortalEngine.getInstance().getPlayerPermissionCheck().canUse(DBConnection.getConnectionID(c.getUuid()), player)) {
-                String errorActionBar = ChatColor.LIGHT_PURPLE +  "You are not permitted to use the portal!";
+            player.sendActionBar(Component.text(errorActionBar));
+            return;
+        }
 
-                player.sendActionBar(Component.text(errorActionBar));
-                return;
-            }
+        List<Portal> portalPair = PortalDAO.getPortalsByConnectionId(portal.getConnectionId());
 
-            ArrayList<PortalData> pair = DBPortal.getPortalByConnID(portal.getConnection_id());
+        if (portalPair.size() != 2) {
+            String actionbar = ChatColor.LIGHT_PURPLE +  "No portal endpoint!";
 
-            if (pair.size() != 2) {
-                String actionbar = ChatColor.LIGHT_PURPLE +  "No portal endpoint!";
+            player.sendActionBar(Component.text(actionbar));
+            return;
+        }
 
+        if (connection.getCharges() == 0) {
+            String actionbar = ChatColor.LIGHT_PURPLE +  "No charges left!";
+
+            player.sendActionBar(Component.text(actionbar));
+            return;
+        }
+        if (connection.getLevel() != 4) {
+            if (PortalEngine.getInstance().getPlayerPermissionCheck().canUse(connection.getId(), player, false)) {
+                int newAmountCharges = connection.getCharges() - 1;
+                connection.setCharges(newAmountCharges);
+                ConnectionDAO.saveConnection(connection);
+                String actionbar = ChatColor.LIGHT_PURPLE +  "You have " + ChatColor.GOLD + (newAmountCharges) + ChatColor.LIGHT_PURPLE + " charges left!";
                 player.sendActionBar(Component.text(actionbar));
-                return;
             }
+        }
 
-            if (c.getCharges() == 0) {
-                String actionbar = ChatColor.LIGHT_PURPLE +  "No charges left!";
+        for (Portal p : portalPair) {
+            UpdatePortalCharges task = new UpdatePortalCharges(p.getLocation());
+            TaskFactory.createTask(task);
+        }
 
-                player.sendActionBar(Component.text(actionbar));
-                return;
-            }
-            if (c.getLevel() != 4) {
-                if (PortalEngine.getInstance().getPlayerPermissionCheck().canUse(DBConnection.getConnectionID(c.getUuid()), player, false)) {
-                    DBConnection.updateCharges(c.getUuid(), c.getCharges() - 1);
-                    String actionbar = ChatColor.LIGHT_PURPLE +  "You have " + ChatColor.GOLD + (c.getCharges() - 1) + ChatColor.LIGHT_PURPLE + " charges left!";
-                    player.sendActionBar(Component.text(actionbar));
-                }
-            }
+        for (Portal p : portalPair) {
+            if (!LocationChecker.isSameBlock(p.getLocation(), portal.getLocation())) {
 
-            for (PortalData d : pair) {
-                UpdatePortalCharges task = new UpdatePortalCharges(d.getLoc());
-                TaskFactory.createTask(task);
-            }
-
-            for (PortalData p : pair) {
-                if (!LocationChecker.isSameBlock(p.getLoc(), portal.getLoc())) {
-
-                    Location dest = p.getLoc().add(new Vector(0.5, 0, 0.5));
-                    dest.setYaw(player.getLocation().getYaw());
-                    dest.setPitch(player.getLocation().getPitch());
-                    PlayerPortalListener.recentlyTeleported.put(player, Instant.now());
-                    PlayerPortalListener.lastTeleportedTo.put(player, dest);
-                    player.teleport(dest);
-                }
+                Location dest = p.getLocation().add(new Vector(0.5, 0, 0.5));
+                dest.setYaw(player.getLocation().getYaw());
+                dest.setPitch(player.getLocation().getPitch());
+                PlayerPortalListener.recentlyTeleported.put(player, Instant.now());
+                PlayerPortalListener.lastTeleportedTo.put(player, dest);
+                player.teleport(dest);
             }
         }
     }

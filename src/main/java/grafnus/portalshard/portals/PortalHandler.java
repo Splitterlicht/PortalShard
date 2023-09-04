@@ -1,11 +1,12 @@
 package grafnus.portalshard.portals;
 
 import grafnus.portalshard.PortalShard;
-import grafnus.portalshard.database.data.PortalData;
-import grafnus.portalshard.database.tables.*;
+import grafnus.portalshard.data.DAO.ConnectionDAO;
+import grafnus.portalshard.data.DAO.PortalDAO;
+import grafnus.portalshard.data.DO.Connection;
+import grafnus.portalshard.data.DO.Portal;
 import grafnus.portalshard.engine.task.CreatePortalITask;
 import grafnus.portalshard.engine.task.TaskFactory;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -29,11 +30,11 @@ public class PortalHandler {
             public void run() {
                 // Get Connection ID
 
-                float cID = DBConnection.getConnectionID(uuid);
+                Connection connection = ConnectionDAO.getConnectionByUuid(uuid);
 
                 // Check for amount of connected portals!
 
-                int count = DBPortal.getPortalByConnID(cID).size();
+                int count = PortalDAO.getPortalsByConnectionId(connection.getId()).size();
                 if (count > 1) {
                     player.sendMessage("You cannot create a third portal using the Key!");
                     loc.getBlock().setType(Material.AIR);
@@ -42,8 +43,8 @@ public class PortalHandler {
 
                 // Create new Portal
 
-                PortalData pData = new PortalData(cID, loc);
-                float pID = DBPortal.addPortal(pData);
+                Portal portal = new Portal(connection.getId(), loc);
+                PortalDAO.savePortal(portal);
 
                 CreatePortalITask task = new CreatePortalITask(loc);
                 TaskFactory.createTask(task);

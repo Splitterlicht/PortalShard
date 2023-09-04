@@ -18,7 +18,6 @@ public class KeyPlacementListener implements Listener {
 
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent e) {
-        //Bukkit.getLogger().log(Level.INFO, "DEBUG MSG: " + e.toString());
         ItemStack placed = e.getPlayer().getInventory().getItemInMainHand();
         if (!ItemHandler.isKey(placed)) {
             return;

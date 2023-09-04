@@ -1,11 +1,10 @@
 package grafnus.portalshard.gui;
 
 import dev.dbassett.skullcreator.SkullCreator;
-import grafnus.portalshard.database.data.ConnectionData;
-import grafnus.portalshard.database.data.PlayerPermsData;
-import grafnus.portalshard.database.data.PortalData;
-import grafnus.portalshard.database.tables.DBConnection;
-import grafnus.portalshard.database.tables.DBPlayerPerms;
+import grafnus.portalshard.data.DAO.PlayerPermissionDAO;
+import grafnus.portalshard.data.DO.Connection;
+import grafnus.portalshard.data.DO.PlayerPermission;
+import grafnus.portalshard.data.DO.Portal;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,20 +24,20 @@ import java.util.logging.Level;
 
 public class PortalPlayerAddListUI {
 
-    private PortalData portalData;
+    private Portal portal;
     private Player player;
 
-    public PortalPlayerAddListUI(Player player, PortalData portalData) {
+    public PortalPlayerAddListUI(Player player, Portal portal) {
         this.player = player;
-        this.portalData = portalData;
+        this.portal = portal;
     }
 
     public void openMenu() {
-        ArrayList<ConnectionData> cd = DBConnection.getConnection(portalData.getConnection_id());
-        if (cd.size() <= 0) {
+        Connection connection = portal.getConnection();
+        if (connection == null) {
             return;
         }
-        ConnectionData c = cd.get(0);
+
         Menu.Builder template = ChestMenu.builder(5).title("Portal Settings").redraw(true);
         Mask itemSlots = BinaryMask.builder(template.getDimensions())
                 .pattern("000000000")
@@ -55,7 +54,7 @@ public class PortalPlayerAddListUI {
                 .previousButtonEmpty(new ItemStack(Material.BARRIER))
                 .previousButtonSlot(18);
 
-        ArrayList<PlayerPermsData> portalPlayers = DBPlayerPerms.getPlayerPerms(this.portalData.getConnection_id());
+        List<PlayerPermission> playerPerms = PlayerPermissionDAO.getPlayerPermissionsByConnectionId(portal.getConnectionId());
         ArrayList<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
 
         for (Player pl:onlinePlayers) {
@@ -69,7 +68,7 @@ public class PortalPlayerAddListUI {
 
             head.setItemMeta(headMeta);
             SlotSettings setting = SlotSettings.builder().clickHandler((player1, clickInformation) -> {
-                PortalPlayerUI playerSettings = new PortalPlayerUI(player1, portalData, Bukkit.getOfflinePlayer(pl.getUniqueId()));
+                PortalPlayerUI playerSettings = new PortalPlayerUI(player1, portal, Bukkit.getOfflinePlayer(pl.getUniqueId()));
                 playerSettings.openMenu();
                 Bukkit.getLogger().log(Level.INFO, "Clicked!");
             }).item(head).build();

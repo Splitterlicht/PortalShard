@@ -2,11 +2,10 @@ package grafnus.portalshard.gui;
 
 import dev.dbassett.skullcreator.SkullCreator;
 import grafnus.portalshard.PERMISSION;
-import grafnus.portalshard.database.data.ConnectionData;
-import grafnus.portalshard.database.data.PlayerPermsData;
-import grafnus.portalshard.database.data.PortalData;
-import grafnus.portalshard.database.tables.DBConnection;
-import grafnus.portalshard.database.tables.DBPlayerPerms;
+import grafnus.portalshard.data.DAO.PlayerPermissionDAO;
+import grafnus.portalshard.data.DO.Connection;
+import grafnus.portalshard.data.DO.PlayerPermission;
+import grafnus.portalshard.data.DO.Portal;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -22,23 +21,24 @@ import java.util.ArrayList;
 public class PortalPlayerUI {
 
     private  OfflinePlayer target;
-    private PortalData portalData;
+    private Portal portal;
     private Player player;
 
-    public PortalPlayerUI(Player player, PortalData portalData, OfflinePlayer target) {
+    public PortalPlayerUI(Player player, Portal portal, OfflinePlayer target) {
         this.player = player;
-        this.portalData = portalData;
+        this.portal = portal;
         this.target = target;
     }
 
     public void openMenu() {
-        ArrayList<ConnectionData> cd = DBConnection.getConnection(portalData.getConnection_id());
-        if (cd.size() <= 0) {
-            return;
+        Connection connection = portal.getConnection();
+
+        PlayerPermission playerPermission = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
+
+        if (playerPermission == null) {
+            playerPermission = new PlayerPermission(connection.getId(), target.getUniqueId());
+            PlayerPermissionDAO.savePlayerPermission(playerPermission);
         }
-        ConnectionData c = cd.get(0);
-        DBPlayerPerms.addIfNotPresent(this.portalData.getConnection_id(), this.target);
-        PlayerPermsData perms = DBPlayerPerms.getPlayerPerm(this.portalData.getConnection_id(), this.target);
         Menu menu = ChestMenu.builder(5).title("Portal Settings").redraw(true).build();
 
         // Head ---------------------------------------------
@@ -53,7 +53,7 @@ public class PortalPlayerUI {
 
         // Use Toggle ---------------------------------------------
         Slot useSlot = menu.getSlot(19);
-        ItemStack useToggle = new ItemStack(getBlockTypeToggle(perms.isUse()));
+        ItemStack useToggle = new ItemStack(getBlockTypeToggle(playerPermission.isUse()));
         ItemMeta useMeta = useToggle.getItemMeta();
 
         useMeta.setDisplayName(ChatColor.BLUE + "Toggle Use Permission");
@@ -65,9 +65,10 @@ public class PortalPlayerUI {
         useSlot.setItem(useToggle);
 
         useSlot.setClickHandler((player1, clickInformation) -> {
-            // TODO: Or if player is moderator!
-            if (c.getPlayer().getUniqueId().equals(player1.getUniqueId()) || PERMISSION.MODERATOR_CHANGE_PERMISSION_USE.isAllowed(player)) {
-                DBPlayerPerms.setUse(portalData.getConnection_id(), target, !perms.isUse());
+            if (connection.getCreatorPlayer().getUniqueId().equals(player1.getUniqueId()) || PERMISSION.MODERATOR_CHANGE_PERMISSION_USE.isAllowed(player)) {
+                PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
+                playerPerm.setUse(!playerPerm.isUse());
+                PlayerPermissionDAO.savePlayerPermission(playerPerm);
                 this.openMenu();
             } else {
                 player1.sendMessage(ChatColor.LIGHT_PURPLE + "You cannot do that!");
@@ -76,7 +77,7 @@ public class PortalPlayerUI {
 
         // Charge Toggle ---------------------------------------------
         Slot chargeSlot = menu.getSlot(21);
-        ItemStack chargeToggle = new ItemStack(getBlockTypeToggle(perms.isCharge()));
+        ItemStack chargeToggle = new ItemStack(getBlockTypeToggle(playerPermission.isCharge()));
         ItemMeta chargeMeta = chargeToggle.getItemMeta();
 
         chargeMeta.setDisplayName(ChatColor.BLUE + "Toggle Charge Permission");
@@ -88,9 +89,10 @@ public class PortalPlayerUI {
         chargeSlot.setItem(chargeToggle);
 
         chargeSlot.setClickHandler((player1, clickInformation) -> {
-            // TODO: Or if player is moderator!
-            if (c.getPlayer().getUniqueId().equals(player1.getUniqueId()) || PERMISSION.MODERATOR_CHANGE_PERMISSION_CHARGE.isAllowed(player)) {
-                DBPlayerPerms.setCharge(portalData.getConnection_id(), target, !perms.isCharge());
+            if (connection.getCreatorPlayer().getUniqueId().equals(player1.getUniqueId()) || PERMISSION.MODERATOR_CHANGE_PERMISSION_CHARGE.isAllowed(player)) {
+                PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
+                playerPerm.setCharge(!playerPerm.isCharge());
+                PlayerPermissionDAO.savePlayerPermission(playerPerm);
                 this.openMenu();
             } else {
                 player1.sendMessage(ChatColor.LIGHT_PURPLE + "You cannot do that!");
@@ -99,7 +101,7 @@ public class PortalPlayerUI {
 
         // Upgrade Toggle ---------------------------------------------
         Slot upgradeSlot = menu.getSlot(23);
-        ItemStack upgradeToggle = new ItemStack(getBlockTypeToggle(perms.isUpgrade()));
+        ItemStack upgradeToggle = new ItemStack(getBlockTypeToggle(playerPermission.isUpgrade()));
         ItemMeta upgradeMeta = upgradeToggle.getItemMeta();
 
         upgradeMeta.setDisplayName(ChatColor.BLUE + "Toggle Upgrade Permission");
@@ -111,9 +113,10 @@ public class PortalPlayerUI {
         upgradeSlot.setItem(upgradeToggle);
 
         upgradeSlot.setClickHandler((player1, clickInformation) -> {
-            // TODO: Or if player is moderator!
-            if (c.getPlayer().getUniqueId().equals(player1.getUniqueId()) || PERMISSION.MODERATOR_CHANGE_PERMISSION_UPGRADE.isAllowed(player)) {
-                DBPlayerPerms.setUpgrade(portalData.getConnection_id(), target, !perms.isUpgrade());
+            if (connection.getCreatorPlayer().getUniqueId().equals(player1.getUniqueId()) || PERMISSION.MODERATOR_CHANGE_PERMISSION_UPGRADE.isAllowed(player)) {
+                PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
+                playerPerm.setUpgrade(!playerPerm.isUpgrade());
+                PlayerPermissionDAO.savePlayerPermission(playerPerm);
                 this.openMenu();
             } else {
                 player1.sendMessage(ChatColor.LIGHT_PURPLE + "You cannot do that!");
@@ -122,7 +125,7 @@ public class PortalPlayerUI {
 
         // Destroy Toggle ---------------------------------------------
         Slot destroySlot = menu.getSlot(25);
-        ItemStack destroyToggle = new ItemStack(getBlockTypeToggle(perms.isDestroy()));
+        ItemStack destroyToggle = new ItemStack(getBlockTypeToggle(playerPermission.isDestroy()));
         ItemMeta destroyMeta = destroyToggle.getItemMeta();
 
         destroyMeta.setDisplayName(ChatColor.BLUE + "Toggle Destroy Permission");
@@ -134,9 +137,10 @@ public class PortalPlayerUI {
         destroySlot.setItem(destroyToggle);
 
         destroySlot.setClickHandler((player1, clickInformation) -> {
-            // TODO: Or if player is moderator!
-            if (c.getPlayer().getUniqueId().equals(player1.getUniqueId()) || PERMISSION.MODERATOR_CHANGE_PERMISSION_DESTROY.isAllowed(c.getPlayer().getPlayer())) {
-                DBPlayerPerms.setDestroy(portalData.getConnection_id(), target, !perms.isDestroy());
+            if (connection.getCreatorPlayer().getUniqueId().equals(player1.getUniqueId()) || PERMISSION.MODERATOR_CHANGE_PERMISSION_DESTROY.isAllowed(connection.getCreatorPlayer().getPlayer())) {
+                PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
+                playerPerm.setDestroy(!playerPerm.isDestroy());
+                PlayerPermissionDAO.savePlayerPermission(playerPerm);
                 this.openMenu();
             } else {
                 player1.sendMessage(ChatColor.LIGHT_PURPLE + "You cannot do that!");

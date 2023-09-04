@@ -1,15 +1,9 @@
 package grafnus.portalshard.gui;
 
 import dev.dbassett.skullcreator.SkullCreator;
-import grafnus.portalshard.database.DataSource;
-import grafnus.portalshard.database.data.ConnectionData;
-import grafnus.portalshard.database.data.PortalData;
-import grafnus.portalshard.database.tables.DBConnection;
-import grafnus.portalshard.util.skulls.SKULL_NUMBERS;
+import grafnus.portalshard.data.DO.Connection;
+import grafnus.portalshard.data.DO.Portal;
 import grafnus.portalshard.util.skulls.SKULL_SYMBOLS;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -21,35 +15,31 @@ import org.ipvp.canvas.slot.Slot;
 import org.ipvp.canvas.type.ChestMenu;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class PortalOverviewUI {
-    private PortalData portalData;
+    private Portal portal;
     private Player player;
 
-    public PortalOverviewUI(Player player, PortalData portalData) {
+    public PortalOverviewUI(Player player, Portal portal) {
         this.player = player;
-        this.portalData = portalData;
+        this.portal = portal;
     }
 
     public void openMenu() {
         Menu menu = ChestMenu.builder(5).title("Portal Settings").redraw(true).build();
 
 
-
-        ArrayList<ConnectionData> cd = DBConnection.getConnection(portalData.getConnection_id());
-        if (cd.size() <= 0) {
+        Connection connection = portal.getConnection();
+        if (connection == null) {
             return;
         }
 
-        ConnectionData c = cd.get(0);
-
         Slot playerHead = menu.getSlot(10);
-        ItemStack ownerHead = SkullCreator.itemFromUuid(c.getPlayer().getUniqueId());
+        ItemStack ownerHead = SkullCreator.itemFromUuid(connection.getCreatorPlayer().getUniqueId());
 
         ItemMeta ownerHeadMeta = ownerHead.getItemMeta();
 
-        ownerHeadMeta.setDisplayName(ChatColor.LIGHT_PURPLE + "Owner: " + ChatColor.GOLD + c.getPlayer().getName());
+        ownerHeadMeta.setDisplayName(ChatColor.LIGHT_PURPLE + "Owner: " + ChatColor.GOLD + connection.getCreatorPlayer().getName());
 
         ownerHead.setItemMeta(ownerHeadMeta);
 
@@ -60,7 +50,7 @@ public class PortalOverviewUI {
         ItemStack levelSkull = SkullCreator.itemFromBase64(SKULL_SYMBOLS.ARROW_UP.toString());
         ItemMeta levelSkullMeta = levelSkull.getItemMeta();
 
-        levelSkullMeta.setDisplayName("Level: " + c.getLevel());
+        levelSkullMeta.setDisplayName("Level: " + connection.getLevel());
 
         levelSkull.setItemMeta(levelSkullMeta);
         levelHead.setItem(levelSkull);
@@ -73,9 +63,9 @@ public class PortalOverviewUI {
 
         chargesSkullMeta.setDisplayName("Portal Information");
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.BLUE + "Owner: " + ChatColor.WHITE + c.getPlayer().getName());
-        lore.add(ChatColor.BLUE + "Charges Left: " + ChatColor.WHITE + c.getCharges());
-        lore.add(ChatColor.BLUE + "UUID: " + ChatColor.WHITE + c.getUuid());
+        lore.add(ChatColor.BLUE + "Owner: " + ChatColor.WHITE + connection.getCreatorPlayer().getName());
+        lore.add(ChatColor.BLUE + "Charges Left: " + ChatColor.WHITE + connection.getCharges());
+        lore.add(ChatColor.BLUE + "UUID: " + ChatColor.WHITE + connection.getUuid());
         chargesSkullMeta.setLore(lore);
 
         chargesSkull.setItemMeta(chargesSkullMeta);
@@ -92,7 +82,7 @@ public class PortalOverviewUI {
         settingHeadItem.setItemMeta(settingHeadItemMeta);
         settingHead.setItem(settingHeadItem);
         settingHead.setClickHandler((player1, clickInformation) -> {
-            PortalSettingsUI portalSettings = new PortalSettingsUI(player1, portalData);
+            PortalSettingsUI portalSettings = new PortalSettingsUI(player1, portal);
             portalSettings.openMenu();
         });
         settingHead.setClickOptions(ClickOptions.DENY_ALL);

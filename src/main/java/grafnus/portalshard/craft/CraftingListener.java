@@ -1,19 +1,17 @@
 package grafnus.portalshard.craft;
 
-import grafnus.portalshard.items.ITEMS;
-import grafnus.portalshard.items.ItemFactory;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
+import grafnus.portalshard.PortalShard;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.*;
-
-import java.util.ArrayList;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class CraftingListener implements Listener {
@@ -47,17 +45,11 @@ public class CraftingListener implements Listener {
         Bukkit.getLogger().log(Level.INFO, "Event (PrepareItemCraftEvent) Called for a Custom Recipe!");
         ItemStack[] slotMatrix = event.getInventory().getMatrix();
         if (!recipe.canCraft(slotMatrix)) {
+            Bukkit.getLogger().log(Level.INFO, "Event (PrepareItemCraftEvent) Can not craft!");
             event.getInventory().setResult(null);
         }
-
-    }
-
-    @EventHandler
-    public void onInvMove(InventoryMoveItemEvent event) {
-        //Bukkit.getLogger().log(Level.INFO, event.getInitiator().toString());
-    }
-    @EventHandler
-    public void onInvMove(InventoryClickEvent event) {
-        //Bukkit.getLogger().log(Level.INFO, event.getAction().name());
+        else {
+            event.getInventory().setResult(recipe.getResult());
+        }
     }
 }

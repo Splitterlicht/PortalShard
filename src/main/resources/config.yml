@@ -1,0 +1,9 @@
+version: 1
+data:
+  enableMySQL: false
+  MySQL:
+    Host: "localhost"
+    Port: "3306"
+    Database: "PortalShard"
+    Username: "PortalShard"
+    Password: "abcd1234ABCD!"
