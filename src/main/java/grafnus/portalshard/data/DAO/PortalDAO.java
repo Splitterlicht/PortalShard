@@ -57,7 +57,7 @@ public class PortalDAO {
 
     public static List<Portal> getPortalsByConnectionId(Long connectionId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Portal> query = session.createQuery("FROM Portal WHERE connection_id >= :connection_id", Portal.class);
+            Query<Portal> query = session.createQuery("FROM Portal WHERE connection_id = :connection_id", Portal.class);
             query.setParameter("connection_id", connectionId);
             return query.list();
         } catch (Exception e) {
