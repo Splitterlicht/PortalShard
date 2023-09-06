@@ -1,9 +1,8 @@
 package grafnus.portalshard.engine.task;
 
-import grafnus.portalshard.database.data.ConnectionData;
-import grafnus.portalshard.database.data.PortalData;
-import grafnus.portalshard.database.tables.DBConnection;
-import grafnus.portalshard.database.tables.DBPortal;
+import grafnus.portalshard.data.DAO.PortalDAO;
+import grafnus.portalshard.data.DO.Connection;
+import grafnus.portalshard.data.DO.Portal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,7 +10,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class UpdatePortalCharges implements ITaskBlueprint {
@@ -31,22 +29,21 @@ public class UpdatePortalCharges implements ITaskBlueprint {
                 if (!anchor.getType().equals(Material.RESPAWN_ANCHOR)) {
                     return;
                 }
-                ArrayList<PortalData> portals = DBPortal.getPortal(location);
-                if (portals.size() != 1) {
+
+                Portal portal = PortalDAO.getPortalByLocation(location);
+                if (portal == null) {
                     Bukkit.getLogger().log(Level.INFO, "Could not find Portal!");
+                    return;
                 }
 
-                PortalData portal = portals.get(0);
-
-                ArrayList<ConnectionData> conns = DBConnection.getConnection(portal.getConnection_id());
-                if (conns.size() != 1) {
+                Connection connection = portal.getConnection();
+                if (connection == null) {
                     Bukkit.getLogger().log(Level.INFO, "Could not find portal Connection!");
+                    return;
                 }
-
-                ConnectionData conn = conns.get(0);
 
                 RespawnAnchor data = (RespawnAnchor) anchor.getBlockData();
-                data.setCharges((conn.getCharges() / 5) % 5);
+                data.setCharges((connection.getCharges() / 5) % 5);
                 anchor.setBlockData(data);
             }
         };

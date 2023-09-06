@@ -1,8 +1,8 @@
 package grafnus.portalshard;
 
-import grafnus.portalshard.commands.BaseCommand;
+import grafnus.portalshard.config.Config;
 import grafnus.portalshard.craft.CraftingListener;
-import grafnus.portalshard.database.DataSource;
+import grafnus.portalshard.data.HibernateUtil;
 import grafnus.portalshard.engine.PortalEngine;
 import grafnus.portalshard.listeners.*;
 import org.bukkit.Bukkit;
@@ -26,14 +26,16 @@ public final class PortalShard extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerPortalListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
         getServer().getPluginManager().registerEvents(new CraftingListener(), this);
-        getServer().getPluginCommand("portal").setExecutor(new BaseCommand());
         loadDependencies();
-        DataSource.getInstance().initTables();
         PortalEngine.getInstance().start();
-
     }
 
     public void loadDependencies() {
+        //Config
+        this.getDataFolder().mkdirs();
+        Config.getInstance();
+        //Database
+        HibernateUtil.getSessionFactory();
         //Canvas
         Bukkit.getPluginManager().registerEvents(new MenuFunctionListener(), PortalShard.getInstance());
 

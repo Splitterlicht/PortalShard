@@ -3,7 +3,6 @@ package grafnus.portalshard.craft;
 import grafnus.portalshard.PortalShard;
 import grafnus.portalshard.items.ITEMS;
 import grafnus.portalshard.items.ItemFactory;
-import me.lucko.helper.Events;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -68,7 +67,7 @@ public class Crafter {
                 .withIngredient('A', new ItemStack(Material.EXPERIENCE_BOTTLE))
                 .withIngredient('B', new ItemStack(Material.CRYING_OBSIDIAN))
                 .withIngredient('C', new ItemStack(Material.DIAMOND))
-                .withIngredient('D', new ItemStack(Material.ENDER_PEARL, 16))
+                .withIngredient('D', new ItemStack(Material.ENDER_PEARL))
                 .withIngredient('E', new ItemStack(Material.ENDER_CHEST))
                 .withIngredient('F', new ItemStack(Material.SOUL_CAMPFIRE))
                 .build();
@@ -92,21 +91,6 @@ public class Crafter {
         Bukkit.getLogger().log(Level.INFO, "[PortalShard] Adding THIRD UPGRADE crafting recipe!");
 
         ItemStack upgradeThreeItem = ItemFactory.buildItemFromTemplate(ITEMS.THIRD_UPGRADE);
-        ItemStack filledShulkerBox = new ItemStack(Material.SHULKER_BOX);
-        if(!(filledShulkerBox.getItemMeta() instanceof BlockStateMeta)){
-            Bukkit.getLogger().log(Level.INFO, "Error filling Shulker Box!");
-        }
-        BlockStateMeta filledShulkerBoxMeta = (BlockStateMeta)filledShulkerBox.getItemMeta();
-        if(!(filledShulkerBoxMeta.getBlockState() instanceof ShulkerBox)){
-            Bukkit.getLogger().log(Level.INFO, "Error filling Shulker Box!");
-        }
-        ShulkerBox shulker = (ShulkerBox) filledShulkerBoxMeta.getBlockState();
-        Inventory inv = shulker.getInventory();
-        while(inv.firstEmpty() != -1) {
-            inv.addItem(new ItemStack(Material.ENDER_PEARL, Material.ENDER_PEARL.getMaxStackSize()));
-        }
-        filledShulkerBoxMeta.setBlockState(shulker);
-        filledShulkerBox.setItemMeta(filledShulkerBoxMeta);
 
         CustomRecipeBuilder
                 .create(plugin)
@@ -116,7 +100,7 @@ public class Crafter {
                 .withIngredient('A', new ItemStack(Material.DRAGON_BREATH))
                 .withIngredient('B', new ItemStack(Material.RESPAWN_ANCHOR))
                 .withIngredient('C', new ItemStack(Material.SEA_LANTERN))
-                .withIngredient('D', new ItemStack(Material.ENDER_EYE, 64))
+                .withIngredient('D', new ItemStack(Material.ENDER_EYE))
                 .withIngredient('E', new ItemStack(Material.DIAMOND_BLOCK))
                 .withIngredient('F', new ItemStack(Material.BEACON))
                 .build();

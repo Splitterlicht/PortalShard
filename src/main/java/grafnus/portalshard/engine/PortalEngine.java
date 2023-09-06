@@ -1,7 +1,9 @@
 package grafnus.portalshard.engine;
 
-import grafnus.portalshard.commands.postcommand.PostCommandHandler;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import grafnus.portalshard.craft.Crafter;
+import grafnus.portalshard.craft.CraftingListener;
 import grafnus.portalshard.engine.events.EEvents;
 import grafnus.portalshard.portals.PortalHandler;
 import org.bukkit.event.Event;
@@ -14,14 +16,12 @@ public class PortalEngine {
     private Listener listener;
     private Crafter crafter;
     private PermissionCheck perms;
-    private PostCommandHandler postCommand;
 
     private PortalEngine() {
         this.taskRunner = new TaskRunner();
         this.listener = new Listener();
         this.crafter = new Crafter();
         this.perms = new PermissionCheck();
-        this.postCommand = new PostCommandHandler();
     }
 
     public static synchronized PortalEngine getInstance() {
@@ -56,9 +56,5 @@ public class PortalEngine {
 
     public void listenToEvent(Event event, EEvents type) {
         listener.listen(event, type);
-    }
-
-    public PostCommandHandler getPostCommandHandler() {
-        return postCommand;
     }
 }

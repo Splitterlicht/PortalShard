@@ -4,7 +4,7 @@ main: grafnus.portalshard.PortalShard
 api-version: 1.18
 prefix: PortalShard
 load: STARTUP
-depend: [helper]
+depend: []
 authors: [ Grafnus ]
 description: Teleport to your most important locations via portal
 commands:

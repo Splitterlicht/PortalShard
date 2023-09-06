@@ -1,8 +1,7 @@
 package grafnus.portalshard.items;
 
-import grafnus.portalshard.database.data.ConnectionData;
-import grafnus.portalshard.database.tables.DBConnection;
-import grafnus.portalshard.portals.PortalHandler;
+import grafnus.portalshard.data.DAO.ConnectionDAO;
+import grafnus.portalshard.data.DO.Connection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -18,8 +17,10 @@ import java.util.UUID;
 public class ItemFactory {
 
     public static ItemStack buildKey(@NotNull Player player) {
-        ConnectionData data = DBConnection.createConnection(player);
-        return buildKey(data.getUuid());
+        //ConnectionData data = DBConnection.createConnection(player);
+        Connection conn = new Connection(player);
+        ConnectionDAO.saveConnection(conn);
+        return buildKey(UUID.fromString(conn.getUuid()));
     }
 
     public static ItemStack buildKey(@NotNull UUID uuid) {

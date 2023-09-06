@@ -1,12 +1,10 @@
 package grafnus.portalshard.engine.events;
 
-import grafnus.portalshard.database.data.ConnectionData;
-import grafnus.portalshard.database.data.PortalData;
-import grafnus.portalshard.database.tables.DBConnection;
-import grafnus.portalshard.database.tables.DBPortal;
+import grafnus.portalshard.data.DAO.PortalDAO;
+import grafnus.portalshard.data.DO.Connection;
+import grafnus.portalshard.data.DO.Portal;
 import grafnus.portalshard.engine.Converter;
 import grafnus.portalshard.engine.PortalEngine;
-import grafnus.portalshard.items.ITEMS;
 import grafnus.portalshard.items.ItemFactory;
 import grafnus.portalshard.util.placement.RelativePosition;
 import net.kyori.adventure.text.Component;
@@ -16,8 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
 
 public class RespawnAnchorBreak implements IEvent {
     @Override
@@ -37,35 +33,31 @@ public class RespawnAnchorBreak implements IEvent {
             return;
 
         Location bl = e.getBlock().getLocation();
-        Location source = RelativePosition.getLocationBelowN(bl, 2);
+        Location sourceLocation = RelativePosition.getLocationBelowN(bl, 2);
 
-        if (!source.getBlock().getType().equals(Material.NETHER_PORTAL))
+        if (!sourceLocation.getBlock().getType().equals(Material.NETHER_PORTAL))
             return;
 
         //ArrayList<PortalData> pds = PortalTable.getPortalByLocation(source);
-        ArrayList<PortalData> pds = DBPortal.getPortal(source);
-        if (pds.size() != 1)
+        Portal portal = PortalDAO.getPortalByLocation(sourceLocation);
+        if (portal == null)
             return;
 
-        PortalData pd = pds.get(0);
+        Connection connection = portal.getConnection();
+        if (connection == null) {
+            return;
+        }
 
-        if (!PortalEngine.getInstance().getPlayerPermissionCheck().canDestroy(pd.getConnection_id(), e.getPlayer())) {
+        if (!PortalEngine.getInstance().getPlayerPermissionCheck().canDestroy(connection.getId(), e.getPlayer())) {
             e.setCancelled(true);
             String actionbar = ChatColor.LIGHT_PURPLE +  "You are not permitted to destroy that portal!";
             e.getPlayer().sendActionBar(Component.text(actionbar));
             return;
         }
 
-        ArrayList<ConnectionData> conns = DBConnection.getConnection(pd.getConnection_id());
+        PortalDAO.removePortal(portal);
 
-        if (conns.size() <= 0) {
-            return;
-        }
-
-        DBPortal.removePortal(source);
-        //PortalTable.removePortal(pd.getUuid(), source);
-
-        ItemStack item = ItemFactory.buildKey(DBConnection.getConnection(pd.getConnection_id()).get(0).getUuid());
+        ItemStack item = ItemFactory.buildKey(connection.getUUID());
 
         e.setDropItems(false);
         e.getBlock().getWorld().dropItemNaturally(bl, item);

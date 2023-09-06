@@ -1,29 +1,24 @@
 package grafnus.portalshard.engine;
 
 import grafnus.portalshard.PERMISSION;
-import grafnus.portalshard.database.data.ConnectionData;
-import grafnus.portalshard.database.data.PlayerPermsData;
-import grafnus.portalshard.database.tables.DBConnection;
-import grafnus.portalshard.database.tables.DBPlayerPerms;
+import grafnus.portalshard.data.DAO.ConnectionDAO;
+import grafnus.portalshard.data.DAO.PlayerPermissionDAO;
+import grafnus.portalshard.data.DO.Connection;
+import grafnus.portalshard.data.DO.PlayerPermission;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 
 public class PermissionCheck {
 
-    public boolean isOwner(float cID, Player player) {
-        ArrayList<ConnectionData> cList = DBConnection.getConnection(cID);
-        if (cList.size() < 1) {
-            return false;
-        }
-        ConnectionData cData = cList.get(0);
-        if (cData.getPlayer().getUniqueId().toString().equals(player.getUniqueId().toString())) {
+    public boolean isOwner(Long cID, Player player) {
+        Connection connection = ConnectionDAO.getConnectionById(cID);
+
+        if (player.getUniqueId().equals(connection.getCreatorUUID())) {
             return true;
         }
         return false;
     }
 
-    public boolean canUse(float cID, Player player, boolean adminCheck) {
+    public boolean canUse(Long cID, Player player, boolean adminCheck) {
         if (adminCheck) {
             if (PERMISSION.MODERATOR_PORTAL_USE.isAllowed(player)) {
                 return true;
@@ -32,24 +27,24 @@ public class PermissionCheck {
         if (isOwner(cID, player)) {
             return true;
         }
-        if (DBConnection.getConnection(cID).get(0).isFfa()) {
+        if (ConnectionDAO.getConnectionById(cID).isFfa()) {
             return true;
         }
-        PlayerPermsData ppData = DBPlayerPerms.getPlayerPerm(cID, player);
+        PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(cID, player);
 
-        if (ppData != null) {
-            if (ppData.isUse()) {
+        if (playerPerm != null) {
+            if (playerPerm.isUse()) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean canUse(float cID, Player player) {
+    public boolean canUse(Long cID, Player player) {
         return canUse(cID, player, true);
     }
 
-    public boolean canCharge(float cID, Player player) {
+    public boolean canCharge(Long cID, Player player) {
 
         if (PERMISSION.MODERATOR_PORTAL_USE.isAllowed(player)) {
             return true;
@@ -57,21 +52,21 @@ public class PermissionCheck {
         if (isOwner(cID, player)) {
             return true;
         }
-        PlayerPermsData ppData = DBPlayerPerms.getPlayerPerm(cID, player);
+        PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(cID, player);
 
-        if (DBConnection.getConnection(cID).get(0).isFfa()) {
+        if (ConnectionDAO.getConnectionById(cID).isFfa()) {
             return true;
         }
 
-        if (ppData != null) {
-            if (!ppData.isCharge()) {
+        if (playerPerm != null) {
+            if (!playerPerm.isCharge()) {
                 return false;
             }
         }
         return true;
     }
 
-    public boolean canUpgrade(float cID, Player player) {
+    public boolean canUpgrade(Long cID, Player player) {
 
         if (PERMISSION.MODERATOR_PORTAL_USE.isAllowed(player)) {
             return true;
@@ -79,17 +74,17 @@ public class PermissionCheck {
         if (isOwner(cID, player)) {
             return true;
         }
-        PlayerPermsData ppData = DBPlayerPerms.getPlayerPerm(cID, player);
+        PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(cID, player);
 
-        if (ppData != null) {
-            if (ppData.isUpgrade()) {
+        if (playerPerm != null) {
+            if (playerPerm.isUpgrade()) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean canDestroy(float cID, Player player) {
+    public boolean canDestroy(Long cID, Player player) {
 
         if (PERMISSION.MODERATOR_PORTAL_USE.isAllowed(player)) {
             return true;
@@ -97,10 +92,10 @@ public class PermissionCheck {
         if (isOwner(cID, player)) {
             return true;
         }
-        PlayerPermsData ppData = DBPlayerPerms.getPlayerPerm(cID, player);
+        PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(cID, player);
 
-        if (ppData != null) {
-            if (ppData.isDestroy()) {
+        if (playerPerm != null) {
+            if (playerPerm.isDestroy()) {
                 return true;
             }
         }

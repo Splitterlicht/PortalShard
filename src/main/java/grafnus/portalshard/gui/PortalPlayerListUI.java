@@ -1,15 +1,12 @@
 package grafnus.portalshard.gui;
 
 import dev.dbassett.skullcreator.SkullCreator;
-import grafnus.portalshard.database.data.ConnectionData;
-import grafnus.portalshard.database.data.PlayerPermsData;
-import grafnus.portalshard.database.data.PortalData;
-import grafnus.portalshard.database.tables.DBConnection;
-import grafnus.portalshard.database.tables.DBPlayerPerms;
-import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
+import grafnus.portalshard.data.DAO.PlayerPermissionDAO;
+import grafnus.portalshard.data.DO.Connection;
+import grafnus.portalshard.data.DO.PlayerPermission;
+import grafnus.portalshard.data.DO.Portal;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -20,26 +17,25 @@ import org.ipvp.canvas.paginate.PaginatedMenuBuilder;
 import org.ipvp.canvas.slot.SlotSettings;
 import org.ipvp.canvas.type.ChestMenu;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PortalPlayerListUI {
 
-    private PortalData portalData;
+    private Portal portal;
     private Player player;
 
-    public PortalPlayerListUI(Player player, PortalData portalData) {
+    public PortalPlayerListUI(Player player, Portal portal) {
         this.player = player;
-        this.portalData = portalData;
+        this.portal = portal;
     }
 
     public void openMenu() {
-        ArrayList<ConnectionData> cd = DBConnection.getConnection(portalData.getConnection_id());
-        if (cd.size() <= 0) {
+        Connection connection = portal.getConnection();
+        if (connection == null) {
             return;
         }
-        ConnectionData c = cd.get(0);
+
         Menu.Builder template = ChestMenu.builder(5).title("Portal Settings").redraw(true);
         Mask itemSlots = BinaryMask.builder(template.getDimensions())
                 .pattern("000000000")
@@ -56,20 +52,20 @@ public class PortalPlayerListUI {
                 .previousButtonEmpty(new ItemStack(Material.BARRIER))
                 .previousButtonSlot(18);
 
-        ArrayList<PlayerPermsData> portalPlayers = DBPlayerPerms.getPlayerPerms(this.portalData.getConnection_id());
+        List<PlayerPermission> playerPerms = PlayerPermissionDAO.getPlayerPermissionsByConnectionId(portal.getConnectionId());
 
-        for (PlayerPermsData data:portalPlayers) {
-            ItemStack head = SkullCreator.itemFromUuid(data.getPlayer().getUniqueId());
+        for (PlayerPermission playerPermission : playerPerms) {
+            ItemStack head = SkullCreator.itemFromUuid(playerPermission.getPlayer().getUniqueId());
             ItemMeta headMeta = head.getItemMeta();
 
-            headMeta.setDisplayName(ChatColor.GOLD + data.getPlayer().getName());
+            headMeta.setDisplayName(ChatColor.GOLD + playerPermission.getPlayer().getName());
             ArrayList<String> lore = new ArrayList<>();
             lore.add(ChatColor.BLUE + "Change Player Permissions");
             headMeta.setLore(lore);
 
             head.setItemMeta(headMeta);
             SlotSettings setting = SlotSettings.builder().clickHandler((player1, clickInformation) -> {
-                PortalPlayerUI playerSettings = new PortalPlayerUI(player1, portalData, data.getPlayer());
+                PortalPlayerUI playerSettings = new PortalPlayerUI(player1, portal, playerPermission.getPlayer());
                 playerSettings.openMenu();
             }).item(head).build();
             pagesBuilder.addItem(setting);
