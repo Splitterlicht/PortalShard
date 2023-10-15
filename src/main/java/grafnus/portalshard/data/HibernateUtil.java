@@ -2,9 +2,9 @@ package grafnus.portalshard.data;
 
 import grafnus.portalshard.PortalShard;
 import grafnus.portalshard.config.Config;
-import grafnus.portalshard.data.DO.Connection;
-import grafnus.portalshard.data.DO.PlayerPermission;
-import grafnus.portalshard.data.DO.Portal;
+import grafnus.portalshard.data.HibernateDO.HibernateConnection;
+import grafnus.portalshard.data.HibernateDO.HibernatePlayerPermission;
+import grafnus.portalshard.data.HibernateDO.HibernatePortal;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -12,7 +12,6 @@ import org.hibernate.cfg.Configuration;
 import org.sqlite.hibernate.dialect.SQLiteDialect;
 
 import java.io.File;
-import java.util.logging.Level;
 
 public class HibernateUtil {
     private static final SessionFactory sessionFactory;
@@ -36,9 +35,9 @@ public class HibernateUtil {
             configuration.setProperty("hibernate.hbm2ddl.auto", "update");
 
             // Add entity classes to configuration
-            configuration.addAnnotatedClass(Connection.class);
-            configuration.addAnnotatedClass(Portal.class);
-            configuration.addAnnotatedClass(PlayerPermission.class);
+            configuration.addAnnotatedClass(HibernateConnection.class);
+            configuration.addAnnotatedClass(HibernatePortal.class);
+            configuration.addAnnotatedClass(HibernatePlayerPermission.class);
 
             StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties())

@@ -1,17 +1,15 @@
 package grafnus.portalshard.data.DAO;
 
-import grafnus.portalshard.data.DO.Connection;
+import grafnus.portalshard.data.HibernateDO.HibernateConnection;
 import grafnus.portalshard.data.HibernateUtil;
-import org.bukkit.Bukkit;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class ConnectionDAO {
-    public static void saveConnection(Connection connection) {
+    public static void saveConnection(HibernateConnection connection) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = null;
             try {
@@ -27,19 +25,19 @@ public class ConnectionDAO {
         }
     }
 
-    public static Connection getConnectionById(Long id) {
+    public static HibernateConnection getConnectionById(Long id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(Connection.class, id);
+            return session.get(HibernateConnection.class, id);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public static Connection getConnectionByUuid(UUID uuid) {
+    public static HibernateConnection getConnectionByUuid(UUID uuid) {
         String uniqueID = uuid.toString();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Connection> query = session.createQuery("FROM Connection WHERE uuid = :uuid", Connection.class);
+            Query<HibernateConnection> query = session.createQuery("FROM HibernateConnection WHERE uuid = :uuid", HibernateConnection.class);
             query.setParameter("uuid", uniqueID);
             return query.uniqueResult();
         } catch (Exception e) {
@@ -48,7 +46,7 @@ public class ConnectionDAO {
         }
     }
 
-    public static void removeConnection(Connection connection) {
+    public static void removeConnection(HibernateConnection connection) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = null;
             try {

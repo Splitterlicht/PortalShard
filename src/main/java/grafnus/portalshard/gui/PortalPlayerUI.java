@@ -3,9 +3,9 @@ package grafnus.portalshard.gui;
 import dev.dbassett.skullcreator.SkullCreator;
 import grafnus.portalshard.PERMISSION;
 import grafnus.portalshard.data.DAO.PlayerPermissionDAO;
-import grafnus.portalshard.data.DO.Connection;
-import grafnus.portalshard.data.DO.PlayerPermission;
-import grafnus.portalshard.data.DO.Portal;
+import grafnus.portalshard.data.HibernateDO.HibernateConnection;
+import grafnus.portalshard.data.HibernateDO.HibernatePlayerPermission;
+import grafnus.portalshard.data.HibernateDO.HibernatePortal;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -21,22 +21,22 @@ import java.util.ArrayList;
 public class PortalPlayerUI {
 
     private  OfflinePlayer target;
-    private Portal portal;
+    private HibernatePortal portal;
     private Player player;
 
-    public PortalPlayerUI(Player player, Portal portal, OfflinePlayer target) {
+    public PortalPlayerUI(Player player, HibernatePortal portal, OfflinePlayer target) {
         this.player = player;
         this.portal = portal;
         this.target = target;
     }
 
     public void openMenu() {
-        Connection connection = portal.getConnection();
+        HibernateConnection connection = portal.getConnection();
 
-        PlayerPermission playerPermission = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
+        HibernatePlayerPermission playerPermission = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
 
         if (playerPermission == null) {
-            playerPermission = new PlayerPermission(connection.getId(), target.getUniqueId());
+            playerPermission = new HibernatePlayerPermission(connection.getId(), target.getUniqueId());
             PlayerPermissionDAO.savePlayerPermission(playerPermission);
         }
         Menu menu = ChestMenu.builder(5).title("Portal Settings").redraw(true).build();
@@ -66,7 +66,7 @@ public class PortalPlayerUI {
 
         useSlot.setClickHandler((player1, clickInformation) -> {
             if (connection.getCreatorPlayer().getUniqueId().equals(player1.getUniqueId()) || PERMISSION.MODERATOR_CHANGE_PERMISSION_USE.isAllowed(player)) {
-                PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
+                HibernatePlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
                 playerPerm.setUse(!playerPerm.isUse());
                 PlayerPermissionDAO.savePlayerPermission(playerPerm);
                 this.openMenu();
@@ -90,7 +90,7 @@ public class PortalPlayerUI {
 
         chargeSlot.setClickHandler((player1, clickInformation) -> {
             if (connection.getCreatorPlayer().getUniqueId().equals(player1.getUniqueId()) || PERMISSION.MODERATOR_CHANGE_PERMISSION_CHARGE.isAllowed(player)) {
-                PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
+                HibernatePlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
                 playerPerm.setCharge(!playerPerm.isCharge());
                 PlayerPermissionDAO.savePlayerPermission(playerPerm);
                 this.openMenu();
@@ -114,7 +114,7 @@ public class PortalPlayerUI {
 
         upgradeSlot.setClickHandler((player1, clickInformation) -> {
             if (connection.getCreatorPlayer().getUniqueId().equals(player1.getUniqueId()) || PERMISSION.MODERATOR_CHANGE_PERMISSION_UPGRADE.isAllowed(player)) {
-                PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
+                HibernatePlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
                 playerPerm.setUpgrade(!playerPerm.isUpgrade());
                 PlayerPermissionDAO.savePlayerPermission(playerPerm);
                 this.openMenu();
@@ -138,7 +138,7 @@ public class PortalPlayerUI {
 
         destroySlot.setClickHandler((player1, clickInformation) -> {
             if (connection.getCreatorPlayer().getUniqueId().equals(player1.getUniqueId()) || PERMISSION.MODERATOR_CHANGE_PERMISSION_DESTROY.isAllowed(connection.getCreatorPlayer().getPlayer())) {
-                PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
+                HibernatePlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(connection.getId(), target);
                 playerPerm.setDestroy(!playerPerm.isDestroy());
                 PlayerPermissionDAO.savePlayerPermission(playerPerm);
                 this.openMenu();

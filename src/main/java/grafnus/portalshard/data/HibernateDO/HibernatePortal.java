@@ -1,17 +1,15 @@
-package grafnus.portalshard.data.DO;
+package grafnus.portalshard.data.HibernateDO;
 
 import grafnus.portalshard.data.DAO.ConnectionDAO;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "portal")
-public class Portal {
+public class HibernatePortal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,10 +35,10 @@ public class Portal {
     @Column(name = "updated")
     private LocalDateTime updated;
 
-    public Portal() {
+    public HibernatePortal() {
     }
 
-    public Portal(Long connectionId, String world , int x, int y, int z) {
+    public HibernatePortal(Long connectionId, String world , int x, int y, int z) {
         this.connectionId = connectionId;
         this.world = world;
         this.x = x;
@@ -50,7 +48,7 @@ public class Portal {
         this.updated = LocalDateTime.now();
     }
 
-    public Portal(Long connectionId, Location location) {
+    public HibernatePortal(Long connectionId, Location location) {
         this(connectionId, location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
@@ -62,7 +60,7 @@ public class Portal {
         return connectionId;
     }
 
-    public Connection getConnection() {
+    public HibernateConnection getConnection() {
         return ConnectionDAO.getConnectionById(this.connectionId);
     }
 

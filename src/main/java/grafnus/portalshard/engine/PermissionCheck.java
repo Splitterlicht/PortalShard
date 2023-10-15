@@ -3,14 +3,14 @@ package grafnus.portalshard.engine;
 import grafnus.portalshard.PERMISSION;
 import grafnus.portalshard.data.DAO.ConnectionDAO;
 import grafnus.portalshard.data.DAO.PlayerPermissionDAO;
-import grafnus.portalshard.data.DO.Connection;
-import grafnus.portalshard.data.DO.PlayerPermission;
+import grafnus.portalshard.data.HibernateDO.HibernateConnection;
+import grafnus.portalshard.data.HibernateDO.HibernatePlayerPermission;
 import org.bukkit.entity.Player;
 
 public class PermissionCheck {
 
     public boolean isOwner(Long cID, Player player) {
-        Connection connection = ConnectionDAO.getConnectionById(cID);
+        HibernateConnection connection = ConnectionDAO.getConnectionById(cID);
 
         if (player.getUniqueId().equals(connection.getCreatorUUID())) {
             return true;
@@ -30,7 +30,7 @@ public class PermissionCheck {
         if (ConnectionDAO.getConnectionById(cID).isFfa()) {
             return true;
         }
-        PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(cID, player);
+        HibernatePlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(cID, player);
 
         if (playerPerm != null) {
             if (playerPerm.isUse()) {
@@ -52,7 +52,7 @@ public class PermissionCheck {
         if (isOwner(cID, player)) {
             return true;
         }
-        PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(cID, player);
+        HibernatePlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(cID, player);
 
         if (ConnectionDAO.getConnectionById(cID).isFfa()) {
             return true;
@@ -74,7 +74,7 @@ public class PermissionCheck {
         if (isOwner(cID, player)) {
             return true;
         }
-        PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(cID, player);
+        HibernatePlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(cID, player);
 
         if (playerPerm != null) {
             if (playerPerm.isUpgrade()) {
@@ -92,7 +92,7 @@ public class PermissionCheck {
         if (isOwner(cID, player)) {
             return true;
         }
-        PlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(cID, player);
+        HibernatePlayerPermission playerPerm = PlayerPermissionDAO.getPlayerPermissionByConnectionIdAndPlayer(cID, player);
 
         if (playerPerm != null) {
             if (playerPerm.isDestroy()) {

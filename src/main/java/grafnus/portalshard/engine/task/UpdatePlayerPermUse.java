@@ -1,8 +1,8 @@
 package grafnus.portalshard.engine.task;
 
 import grafnus.portalshard.data.DAO.PortalDAO;
-import grafnus.portalshard.data.DO.Connection;
-import grafnus.portalshard.data.DO.Portal;
+import grafnus.portalshard.data.HibernateDO.HibernateConnection;
+import grafnus.portalshard.data.HibernateDO.HibernatePortal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,13 +29,13 @@ public class UpdatePlayerPermUse implements ITaskBlueprint {
                 if (!anchor.getType().equals(Material.RESPAWN_ANCHOR)) {
                     return;
                 }
-                Portal portal = PortalDAO.getPortalByLocation(location);
+                HibernatePortal portal = PortalDAO.getPortalByLocation(location);
                 if (portal == null) {
                     Bukkit.getLogger().log(Level.INFO, "Could not find Portal!");
                     return;
                 }
 
-                Connection connection = portal.getConnection();
+                HibernateConnection connection = portal.getConnection();
                 if (connection == null) {
                     Bukkit.getLogger().log(Level.INFO, "Could not find portal Connection!");
                     return;

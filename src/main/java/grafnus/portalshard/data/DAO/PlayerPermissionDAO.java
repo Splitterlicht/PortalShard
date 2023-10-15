@@ -1,20 +1,16 @@
 package grafnus.portalshard.data.DAO;
 
-import grafnus.portalshard.data.DO.Connection;
-import grafnus.portalshard.data.DO.PlayerPermission;
-import grafnus.portalshard.data.DO.Portal;
+import grafnus.portalshard.data.HibernateDO.HibernatePlayerPermission;
 import grafnus.portalshard.data.HibernateUtil;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import java.util.List;
-import java.util.UUID;
 
 public class PlayerPermissionDAO {
-    public static void savePlayerPermission(PlayerPermission playerPermission) {
+    public static void savePlayerPermission(HibernatePlayerPermission playerPermission) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = null;
             try {
@@ -30,18 +26,18 @@ public class PlayerPermissionDAO {
         }
     }
 
-    public static PlayerPermission getPlayerPermissionById(Long id) {
+    public static HibernatePlayerPermission getPlayerPermissionById(Long id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(PlayerPermission.class, id);
+            return session.get(HibernatePlayerPermission.class, id);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public static PlayerPermission getPlayerPermissionByConnectionIdAndPlayer(Long connectionId, OfflinePlayer player) {
+    public static HibernatePlayerPermission getPlayerPermissionByConnectionIdAndPlayer(Long connectionId, OfflinePlayer player) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<PlayerPermission> query = session.createQuery("FROM PlayerPermission WHERE connection_id = :connection_id AND uuid = :uuid", PlayerPermission.class);
+            Query<HibernatePlayerPermission> query = session.createQuery("FROM HibernatePlayerPermission WHERE connection_id = :connection_id AND uuid = :uuid", HibernatePlayerPermission.class);
             query.setParameter("connection_id", connectionId);
             query.setParameter("uuid", player.getUniqueId().toString());
             return query.uniqueResult();
@@ -51,9 +47,9 @@ public class PlayerPermissionDAO {
         }
     }
 
-    public static List<PlayerPermission> getPlayerPermissionsByConnectionId(Long connectionId) {
+    public static List<HibernatePlayerPermission> getPlayerPermissionsByConnectionId(Long connectionId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<PlayerPermission> query = session.createQuery("FROM PlayerPermission WHERE connection_id >= :connection_id", PlayerPermission.class);
+            Query<HibernatePlayerPermission> query = session.createQuery("FROM HibernatePlayerPermission WHERE connection_id >= :connection_id", HibernatePlayerPermission.class);
             query.setParameter("connection_id", connectionId);
             return query.list();
         } catch (Exception e) {
@@ -62,7 +58,7 @@ public class PlayerPermissionDAO {
         }
     }
 
-    public static void removePlayerPermission(PlayerPermission playerPermission) {
+    public static void removePlayerPermission(HibernatePlayerPermission playerPermission) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = null;
             try {
