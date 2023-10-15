@@ -3,8 +3,8 @@ package grafnus.portalshard.engine.events;
 import grafnus.portalshard.PortalShard;
 import grafnus.portalshard.data.DAO.ConnectionDAO;
 import grafnus.portalshard.data.DAO.PortalDAO;
-import grafnus.portalshard.data.DO.Connection;
-import grafnus.portalshard.data.DO.Portal;
+import grafnus.portalshard.data.HibernateDO.HibernateConnection;
+import grafnus.portalshard.data.HibernateDO.HibernatePortal;
 import grafnus.portalshard.engine.Converter;
 import grafnus.portalshard.engine.PortalEngine;
 import grafnus.portalshard.engine.task.TaskFactory;
@@ -69,11 +69,11 @@ public class PlayerInteractRespawnAnchor implements IEvent {
     private void tryPortalUpgrade(PlayerInteractEvent event, ItemStack itemInHand, ITEMS upgrade) {
 
         Location loc = RelativePosition.getLocationBelowN(event.getClickedBlock().getLocation(), 2);
-        Portal portal = PortalDAO.getPortalByLocation(loc);
+        HibernatePortal portal = PortalDAO.getPortalByLocation(loc);
         if (portal == null)
             return;
 
-        Connection connection = portal.getConnection();
+        HibernateConnection connection = portal.getConnection();
         if (connection == null)
             return;
 
@@ -125,11 +125,11 @@ public class PlayerInteractRespawnAnchor implements IEvent {
     private void chargePortal(PlayerInteractEvent event) {
         Location loc = RelativePosition.getLocationBelowN(event.getClickedBlock().getLocation(), 2);
 
-        Portal portal = PortalDAO.getPortalByLocation(loc);
+        HibernatePortal portal = PortalDAO.getPortalByLocation(loc);
         if (portal == null)
             return;
 
-        Connection connection = portal.getConnection();
+        HibernateConnection connection = portal.getConnection();
         if (connection == null)
             return;
 
@@ -171,8 +171,8 @@ public class PlayerInteractRespawnAnchor implements IEvent {
             public void run() {
                 connection.setCharges(finalNewCharges);
                 ConnectionDAO.saveConnection(connection);
-                List<Portal> portals = PortalDAO.getPortalsByConnectionId(connection.getId());
-                for (Portal p : portals) {
+                List<HibernatePortal> portals = PortalDAO.getPortalsByConnectionId(connection.getId());
+                for (HibernatePortal p : portals) {
                     TaskFactory.createTask(new UpdatePortalCharges(p.getLocation()));
                 }
             }
@@ -183,7 +183,7 @@ public class PlayerInteractRespawnAnchor implements IEvent {
     private void openMenu(PlayerInteractEvent event) {
 
         Location loc = RelativePosition.getLocationBelowN(event.getClickedBlock().getLocation(), 2);
-        Portal portal = PortalDAO.getPortalByLocation(loc);
+        HibernatePortal portal = PortalDAO.getPortalByLocation(loc);
         if (portal == null)
             return;
         PortalOverviewUI ui = new PortalOverviewUI(event.getPlayer(), portal);

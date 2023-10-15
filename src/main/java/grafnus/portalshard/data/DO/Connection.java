@@ -4,120 +4,160 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "connection")
-public class Connection {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+/**
+ * Interface describing how a Connection-Data-Object is supposed to look like.
+ *
+ * The Connection Data Objects holds the information. It is returned by the Connection-Data-Access-Object.
+ * @author Grafnus
+ *
+ */
+public interface Connection {
 
-    @Column(name = "uuid")
-    private String uuid;
+    /**
+     * Returns the unique ID of the persistent data set for the connection.
+     *
+     * @return The unique persistent data ID for the connection
+     * @since 1.0
+     */
+    public Long getId();
 
-    @Column(name = "charges")
-    private int charges;
+    /**
+     * Returns the UUID of the Connection displayed on the Key in text format.
+     *
+     * @return The Connection UUID as text
+     * @since 1.0
+     */
+    public String getUuid();
 
-    @Column(name = "level")
-    private int level;
+    /**
+     * Returns the UUID of the Connection displayed on the Key.
+     *
+     * @return The Connection UUID
+     * @since 1.0
+     */
+    public UUID getUUID();
 
-    @Column(name = "ffa")
-    private boolean ffa;
+    /**
+     * Returns the charges a connection has left. Charges describe how often a portal can be used until a recharge is necessary.
+     *
+     * @return The amount of charges left
+     * @since 1.0
+     */
+    public int getCharges();
 
-    @Column(name = "created_by")
-    private String createdBy;
+    /**
+     * Sets the charges a connection has left. Charges describe how often a portal can be used until a recharge is necessary.
+     *
+     * This method is used to recharge or discharge a connection
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
+    public void setCharges(int charges);
 
-    @Column(name = "created")
-    private LocalDateTime created;
+    /**
+     * Returns the unique ID of the Persistent Data Set for the Connection.
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
+    public int getLevel();
 
-    @Column(name = "updated")
-    private LocalDateTime updated;
+    /**
+     * Returns the unique ID of the Persistent Data Set for the Connection.
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
+    public void setLevel(int level);
 
-    public Connection() {
-    }
+    /**
+     * Returns the unique ID of the Persistent Data Set for the Connection.
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
+    public boolean isFfa();
 
-    public Connection(UUID uuid, int charges, int level, boolean ffa, Player creator) {
-        this.uuid = uuid.toString();
-        this.charges = charges;
-        this.level = level;
-        this.ffa = ffa;
-        this.createdBy = creator.getUniqueId().toString();
-        this.created = LocalDateTime.now();
-        this.updated = LocalDateTime.now();
-    }
+    /**
+     * Returns the unique ID of the Persistent Data Set for the Connection.
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
+    public void setFfa(boolean ffa);
 
-    public Connection(Player creator) {
-        this(UUID.randomUUID(), 20, 1, false, creator);
-    }
+    /**
+     * Returns the unique ID of the Persistent Data Set for the Connection.
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
+    public String getCreator();
 
-    public Long getId() {
-        return id;
-    }
+    /**
+     * Returns the unique ID of the Persistent Data Set for the Connection.
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
+    public UUID getCreatorUUID();
 
-    public String getUuid() {
-        return uuid;
-    }
+    /**
+     * Returns the unique ID of the Persistent Data Set for the Connection.
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
+    public OfflinePlayer getCreatorPlayer();
 
-    public UUID getUUID() {return UUID.fromString(this.uuid);}
+    /**
+     * Returns the unique ID of the Persistent Data Set for the Connection.
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
+    public void setCreator(String creator);
 
-    public int getCharges() {
-        return charges;
-    }
+    /**
+     * Returns the unique ID of the Persistent Data Set for the Connection.
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
+    public void setCreator(UUID creator);
 
-    public void setCharges(int charges) {
-        this.charges = charges;
-        this.updated = LocalDateTime.now();
-    }
+    /**
+     * Returns the unique ID of the Persistent Data Set for the Connection.
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
+    public void setCreator(OfflinePlayer creator);
 
-    public int getLevel() {
-        return level;
-    }
+    /**
+     * Returns the unique ID of the Persistent Data Set for the Connection.
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
+    public LocalDateTime getCreated();
 
-    public void setLevel(int level) {
-        this.level = level;
-        this.updated = LocalDateTime.now();
-    }
+    /**
+     * Returns the unique ID of the Persistent Data Set for the Connection.
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
+    public LocalDateTime getUpdated();
 
-    public boolean isFfa() {
-        return ffa;
-    }
-
-    public void setFfa(boolean ffa) {
-        this.ffa = ffa;
-        this.updated = LocalDateTime.now();
-    }
-
-    public String getCreator() {
-        return createdBy;
-    }
-
-    public UUID getCreatorUUID() {
-        return UUID.fromString(this.getCreator());
-    }
-
-    public OfflinePlayer getCreatorPlayer() {return Bukkit.getOfflinePlayer(UUID.fromString(this.getCreator()));}
-
-    public void setCreator(String creator) {
-        this.createdBy = createdBy;
-        this.updated = LocalDateTime.now();
-    }
-
-    public void setCreator(UUID creator) {
-        this.setCreator(creator.toString());
-    }
-
-    public void setCreator(OfflinePlayer creator) {
-        this.setCreator(creator.getUniqueId());
-    }
-
-    public LocalDateTime getCreated() {
-        return created;
-    }
-
-    public LocalDateTime getUpdated() {
-        return updated;
-    }
+    /**
+     * Returns the unique ID of the Persistent Data Set for the Connection.
+     *
+     * @return The unique Persistent Data ID for the connection
+     * @since 1.0
+     */
 }

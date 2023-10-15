@@ -1,8 +1,8 @@
 package grafnus.portalshard.engine.events;
 
 import grafnus.portalshard.data.DAO.PortalDAO;
-import grafnus.portalshard.data.DO.Connection;
-import grafnus.portalshard.data.DO.Portal;
+import grafnus.portalshard.data.HibernateDO.HibernateConnection;
+import grafnus.portalshard.data.HibernateDO.HibernatePortal;
 import grafnus.portalshard.engine.Converter;
 import grafnus.portalshard.engine.PortalEngine;
 import grafnus.portalshard.items.ItemFactory;
@@ -39,11 +39,11 @@ public class RespawnAnchorBreak implements IEvent {
             return;
 
         //ArrayList<PortalData> pds = PortalTable.getPortalByLocation(source);
-        Portal portal = PortalDAO.getPortalByLocation(sourceLocation);
+        HibernatePortal portal = PortalDAO.getPortalByLocation(sourceLocation);
         if (portal == null)
             return;
 
-        Connection connection = portal.getConnection();
+        HibernateConnection connection = portal.getConnection();
         if (connection == null) {
             return;
         }

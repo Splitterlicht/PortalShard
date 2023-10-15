@@ -1,8 +1,9 @@
 package grafnus.portalshard.gui;
 
 import dev.dbassett.skullcreator.SkullCreator;
-import grafnus.portalshard.data.DO.Connection;
-import grafnus.portalshard.data.DO.Portal;
+import grafnus.portalshard.PERMISSION;
+import grafnus.portalshard.data.HibernateDO.HibernateConnection;
+import grafnus.portalshard.data.HibernateDO.HibernatePortal;
 import grafnus.portalshard.util.skulls.SKULL_SYMBOLS;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,10 +18,10 @@ import org.ipvp.canvas.type.ChestMenu;
 import java.util.ArrayList;
 
 public class PortalOverviewUI {
-    private Portal portal;
+    private HibernatePortal portal;
     private Player player;
 
-    public PortalOverviewUI(Player player, Portal portal) {
+    public PortalOverviewUI(Player player, HibernatePortal portal) {
         this.player = player;
         this.portal = portal;
     }
@@ -29,7 +30,7 @@ public class PortalOverviewUI {
         Menu menu = ChestMenu.builder(5).title("Portal Settings").redraw(true).build();
 
 
-        Connection connection = portal.getConnection();
+        HibernateConnection connection = portal.getConnection();
         if (connection == null) {
             return;
         }
@@ -72,20 +73,24 @@ public class PortalOverviewUI {
         chargeCounterHead.setItem(chargesSkull);
         chargeCounterHead.setClickOptions(ClickOptions.DENY_ALL);
 
-        Slot settingHead = menu.getSlot(31);
+        if (connection.getCreatorPlayer().getUniqueId().equals(player.getUniqueId())) {
+            Slot settingHead = menu.getSlot(31);
 
-        ItemStack settingHeadItem = new ItemStack(Material.WRITABLE_BOOK);
+            ItemStack settingHeadItem = new ItemStack(Material.WRITABLE_BOOK);
 
 
-        ItemMeta settingHeadItemMeta = settingHeadItem.getItemMeta();
-        settingHeadItemMeta.setDisplayName("Settings");
-        settingHeadItem.setItemMeta(settingHeadItemMeta);
-        settingHead.setItem(settingHeadItem);
-        settingHead.setClickHandler((player1, clickInformation) -> {
-            PortalSettingsUI portalSettings = new PortalSettingsUI(player1, portal);
-            portalSettings.openMenu();
-        });
-        settingHead.setClickOptions(ClickOptions.DENY_ALL);
+            ItemMeta settingHeadItemMeta = settingHeadItem.getItemMeta();
+            settingHeadItemMeta.setDisplayName("Settings");
+            settingHeadItem.setItemMeta(settingHeadItemMeta);
+            settingHead.setItem(settingHeadItem);
+            settingHead.setClickHandler((player1, clickInformation) -> {
+                PortalSettingsUI portalSettings = new PortalSettingsUI(player1, portal);
+                portalSettings.openMenu();
+            });
+            settingHead.setClickOptions(ClickOptions.DENY_ALL);
+        }
+
+
 
         menu.open(this.player);
         return;

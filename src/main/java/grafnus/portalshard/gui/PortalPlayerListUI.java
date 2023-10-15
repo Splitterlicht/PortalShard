@@ -2,9 +2,9 @@ package grafnus.portalshard.gui;
 
 import dev.dbassett.skullcreator.SkullCreator;
 import grafnus.portalshard.data.DAO.PlayerPermissionDAO;
-import grafnus.portalshard.data.DO.Connection;
-import grafnus.portalshard.data.DO.PlayerPermission;
-import grafnus.portalshard.data.DO.Portal;
+import grafnus.portalshard.data.HibernateDO.HibernateConnection;
+import grafnus.portalshard.data.HibernateDO.HibernatePlayerPermission;
+import grafnus.portalshard.data.HibernateDO.HibernatePortal;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -22,16 +22,16 @@ import java.util.List;
 
 public class PortalPlayerListUI {
 
-    private Portal portal;
+    private HibernatePortal portal;
     private Player player;
 
-    public PortalPlayerListUI(Player player, Portal portal) {
+    public PortalPlayerListUI(Player player, HibernatePortal portal) {
         this.player = player;
         this.portal = portal;
     }
 
     public void openMenu() {
-        Connection connection = portal.getConnection();
+        HibernateConnection connection = portal.getConnection();
         if (connection == null) {
             return;
         }
@@ -52,9 +52,9 @@ public class PortalPlayerListUI {
                 .previousButtonEmpty(new ItemStack(Material.BARRIER))
                 .previousButtonSlot(18);
 
-        List<PlayerPermission> playerPerms = PlayerPermissionDAO.getPlayerPermissionsByConnectionId(portal.getConnectionId());
+        List<HibernatePlayerPermission> playerPerms = PlayerPermissionDAO.getPlayerPermissionsByConnectionId(portal.getConnectionId());
 
-        for (PlayerPermission playerPermission : playerPerms) {
+        for (HibernatePlayerPermission playerPermission : playerPerms) {
             ItemStack head = SkullCreator.itemFromUuid(playerPermission.getPlayer().getUniqueId());
             ItemMeta headMeta = head.getItemMeta();
 

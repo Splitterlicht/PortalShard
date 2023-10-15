@@ -1,18 +1,15 @@
-package grafnus.portalshard.data.DO;
+package grafnus.portalshard.data.HibernateDO;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-import org.hibernate.type.LocalDateTimeType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
 @Table(name = "player_perms")
-public class PlayerPermission {
+public class HibernatePlayerPermission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,7 +20,7 @@ public class PlayerPermission {
     @Column(name = "uuid")
     private String uuid;
 
-    @Column(name = "use")
+    @Column(name = "`use`")
     private boolean use;
 
     @Column(name = "charge")
@@ -41,9 +38,9 @@ public class PlayerPermission {
     @Column(name = "updated")
     private LocalDateTime updated;
 
-    public PlayerPermission() {}
+    public HibernatePlayerPermission() {}
 
-    public PlayerPermission(Long connectionId, UUID uuid) {
+    public HibernatePlayerPermission(Long connectionId, UUID uuid) {
         this.connectionId = connectionId;
         this.uuid = uuid.toString();
         this.use = false;
@@ -71,7 +68,7 @@ public class PlayerPermission {
     }
 
     public OfflinePlayer getPlayer() {
-        return Bukkit.getOfflinePlayer(getUuid());
+        return Bukkit.getOfflinePlayer(getUUID());
     }
 
     public void setUuid(String uuid) {

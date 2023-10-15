@@ -3,8 +3,8 @@ package grafnus.portalshard.portals;
 import grafnus.portalshard.PortalShard;
 import grafnus.portalshard.data.DAO.ConnectionDAO;
 import grafnus.portalshard.data.DAO.PortalDAO;
-import grafnus.portalshard.data.DO.Connection;
-import grafnus.portalshard.data.DO.Portal;
+import grafnus.portalshard.data.HibernateDO.HibernateConnection;
+import grafnus.portalshard.data.HibernateDO.HibernatePortal;
 import grafnus.portalshard.engine.task.CreatePortalITask;
 import grafnus.portalshard.engine.task.TaskFactory;
 import org.bukkit.Location;
@@ -29,7 +29,7 @@ public class PortalHandler {
             public void run() {
                 // Get Connection ID
 
-                Connection connection = ConnectionDAO.getConnectionByUuid(uuid);
+                HibernateConnection connection = ConnectionDAO.getConnectionByUuid(uuid);
 
                 // Check for amount of connected portals!
 
@@ -42,7 +42,7 @@ public class PortalHandler {
 
                 // Create new Portal
 
-                Portal portal = new Portal(connection.getId(), loc);
+                HibernatePortal portal = new HibernatePortal(connection.getId(), loc);
                 PortalDAO.savePortal(portal);
 
                 CreatePortalITask task = new CreatePortalITask(loc);

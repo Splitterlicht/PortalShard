@@ -2,8 +2,8 @@ package grafnus.portalshard.gui;
 
 import grafnus.portalshard.PERMISSION;
 import grafnus.portalshard.data.DAO.ConnectionDAO;
-import grafnus.portalshard.data.DO.Connection;
-import grafnus.portalshard.data.DO.Portal;
+import grafnus.portalshard.data.HibernateDO.HibernateConnection;
+import grafnus.portalshard.data.HibernateDO.HibernatePortal;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,11 +17,11 @@ import java.util.ArrayList;
 
 public class PortalSettingsUI {
 
-    private Portal portal;
+    private HibernatePortal portal;
     private Player player;
     //TODO: Use Canvas to create UIs
 
-    public PortalSettingsUI(Player player, Portal portal) {
+    public PortalSettingsUI(Player player, HibernatePortal portal) {
         this.player = player;
         this.portal = portal;
     }
@@ -29,7 +29,7 @@ public class PortalSettingsUI {
     public void openMenu() {
         Menu menu = ChestMenu.builder(5).title("Portal Settings").redraw(true).build();
 
-        Connection connection = portal.getConnection();
+        HibernateConnection connection = portal.getConnection();
         if (connection == null) {
             return;
         }

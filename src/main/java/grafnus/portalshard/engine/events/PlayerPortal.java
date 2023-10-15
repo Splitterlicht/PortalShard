@@ -3,8 +3,8 @@ package grafnus.portalshard.engine.events;
 import grafnus.portalshard.PortalShard;
 import grafnus.portalshard.data.DAO.ConnectionDAO;
 import grafnus.portalshard.data.DAO.PortalDAO;
-import grafnus.portalshard.data.DO.Connection;
-import grafnus.portalshard.data.DO.Portal;
+import grafnus.portalshard.data.HibernateDO.HibernateConnection;
+import grafnus.portalshard.data.HibernateDO.HibernatePortal;
 import grafnus.portalshard.engine.Converter;
 import grafnus.portalshard.engine.PortalEngine;
 import grafnus.portalshard.engine.task.TaskFactory;
@@ -45,7 +45,7 @@ public class PlayerPortal implements IEvent {
         Player player = (Player) e.getEntity();
         Location loc = getSourceLocation(e.getLocation());
 
-        Portal portal = PortalDAO.getPortalByLocation(loc);
+        HibernatePortal portal = PortalDAO.getPortalByLocation(loc);
         if (portal == null) {
             return;
         }
@@ -65,7 +65,7 @@ public class PlayerPortal implements IEvent {
         };
         remove.runTaskLater(PortalShard.getInstance(), 200);
 
-        Connection connection = portal.getConnection();
+        HibernateConnection connection = portal.getConnection();
         if (connection == null) {
             return;
         }
@@ -76,7 +76,7 @@ public class PlayerPortal implements IEvent {
             return;
         }
 
-        List<Portal> portalPair = PortalDAO.getPortalsByConnectionId(portal.getConnectionId());
+        List<HibernatePortal> portalPair = PortalDAO.getPortalsByConnectionId(portal.getConnectionId());
 
         if (portalPair.size() != 2) {
             String actionbar = ChatColor.LIGHT_PURPLE +  "No portal endpoint!";
@@ -101,12 +101,12 @@ public class PlayerPortal implements IEvent {
             }
         }
 
-        for (Portal p : portalPair) {
+        for (HibernatePortal p : portalPair) {
             UpdatePortalCharges task = new UpdatePortalCharges(p.getLocation());
             TaskFactory.createTask(task);
         }
 
-        for (Portal p : portalPair) {
+        for (HibernatePortal p : portalPair) {
             if (!LocationChecker.isSameBlock(p.getLocation(), portal.getLocation())) {
 
                 Location dest = p.getLocation().add(new Vector(0.5, 0, 0.5));
