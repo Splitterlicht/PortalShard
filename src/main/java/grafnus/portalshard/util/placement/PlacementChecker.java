@@ -1,11 +1,9 @@
 package grafnus.portalshard.util.placement;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 public class PlacementChecker {
 
@@ -65,11 +63,11 @@ public class PlacementChecker {
     }
 
     public static Location getLocationAbove(Location loc) {
-        return new Location(loc.getWorld(), loc.getX() + 1, loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        return new Location(loc.getWorld(), loc.getX(), loc.getY() + 1, loc.getZ(), loc.getYaw(), loc.getPitch());
     }
 
     public static Location getLocationBelow(Location loc) {
-        return new Location(loc.getWorld(), loc.getX() - 1, loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        return new Location(loc.getWorld(), loc.getX(), loc.getY() - 1, loc.getZ(), loc.getYaw(), loc.getPitch());
     }
 
     public static Location getLocationSouth(Location loc) {

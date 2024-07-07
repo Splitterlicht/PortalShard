@@ -12,8 +12,9 @@ import grafnus.portalshard.engine.task.UpdatePortalCharges;
 import grafnus.portalshard.listeners.PlayerPortalListener;
 import grafnus.portalshard.util.location.LocationChecker;
 import grafnus.portalshard.util.placement.RelativePosition;
-import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -71,8 +72,7 @@ public class PlayerPortal implements IEvent {
         }
         if (!PortalEngine.getInstance().getPlayerPermissionCheck().canUse(connection.getId(), player)) {
             String errorActionBar = ChatColor.LIGHT_PURPLE +  "You are not permitted to use the portal!";
-
-            player.sendActionBar(Component.text(errorActionBar));
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(errorActionBar));
             return;
         }
 
@@ -80,15 +80,14 @@ public class PlayerPortal implements IEvent {
 
         if (portalPair.size() != 2) {
             String actionbar = ChatColor.LIGHT_PURPLE +  "No portal endpoint!";
-
-            player.sendActionBar(Component.text(actionbar));
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(actionbar));
             return;
         }
 
         if (connection.getCharges() == 0) {
             String actionbar = ChatColor.LIGHT_PURPLE +  "No charges left!";
 
-            player.sendActionBar(Component.text(actionbar));
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(actionbar));
             return;
         }
         if (connection.getLevel() != 4) {
@@ -97,7 +96,7 @@ public class PlayerPortal implements IEvent {
                 connection.setCharges(newAmountCharges);
                 ConnectionDAO.saveConnection(connection);
                 String actionbar = ChatColor.LIGHT_PURPLE +  "You have " + ChatColor.GOLD + (newAmountCharges) + ChatColor.LIGHT_PURPLE + " charges left!";
-                player.sendActionBar(Component.text(actionbar));
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(actionbar));
             }
         }
 

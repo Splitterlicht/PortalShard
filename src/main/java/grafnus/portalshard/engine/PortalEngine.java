@@ -1,11 +1,7 @@
 package grafnus.portalshard.engine;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import grafnus.portalshard.craft.Crafter;
-import grafnus.portalshard.craft.CraftingListener;
 import grafnus.portalshard.engine.events.EEvents;
-import grafnus.portalshard.portals.PortalHandler;
 import org.bukkit.event.Event;
 
 public class PortalEngine {

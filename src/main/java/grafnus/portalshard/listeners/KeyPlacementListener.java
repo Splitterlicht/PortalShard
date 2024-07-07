@@ -4,15 +4,10 @@ import grafnus.portalshard.items.ItemHandler;
 import grafnus.portalshard.portals.PortalHandler;
 import grafnus.portalshard.util.key.UUIDGrabber;
 import grafnus.portalshard.util.placement.PlacementChecker;
-import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.logging.Level;
 
 public class KeyPlacementListener implements Listener {
 

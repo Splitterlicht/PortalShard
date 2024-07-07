@@ -7,8 +7,9 @@ import grafnus.portalshard.engine.Converter;
 import grafnus.portalshard.engine.PortalEngine;
 import grafnus.portalshard.items.ItemFactory;
 import grafnus.portalshard.util.placement.RelativePosition;
-import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
@@ -51,7 +52,7 @@ public class RespawnAnchorBreak implements IEvent {
         if (!PortalEngine.getInstance().getPlayerPermissionCheck().canDestroy(connection.getId(), e.getPlayer())) {
             e.setCancelled(true);
             String actionbar = ChatColor.LIGHT_PURPLE +  "You are not permitted to destroy that portal!";
-            e.getPlayer().sendActionBar(Component.text(actionbar));
+            e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(actionbar));
             return;
         }
 
@@ -65,7 +66,7 @@ public class RespawnAnchorBreak implements IEvent {
 
         String actionbar = ChatColor.LIGHT_PURPLE +  "You destroyed a portal!";
 
-        e.getPlayer().sendActionBar(Component.text(actionbar));
+        e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(actionbar));
     }
 
     private BlockBreakEvent convert(Event event) {

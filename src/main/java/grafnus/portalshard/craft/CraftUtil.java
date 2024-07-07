@@ -1,12 +1,6 @@
 package grafnus.portalshard.craft;
 
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
-
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.logging.Level;
 
 public class CraftUtil {
 
@@ -26,11 +20,10 @@ public class CraftUtil {
             if (!ingredient.getEnchantments().equals(slot.getEnchantments())) {
                 return false;
             }
-            if (!ingredient.getItemFlags().equals(slot.getItemFlags())) {
-                return false;
-            }
-            if (!ingredient.getRarity().equals(slot.getRarity())) {
-                return false;
+            if (ingredient.hasItemMeta()) {
+                if (!ingredient.getItemMeta().getItemFlags().equals(slot.getItemMeta().getItemFlags())) {
+                    return false;
+                }
             }
 
             if (ingredient.getAmount() > slot.getAmount()) {

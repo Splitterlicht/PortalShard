@@ -14,8 +14,9 @@ import grafnus.portalshard.items.ITEMS;
 import grafnus.portalshard.items.ItemFactory;
 import grafnus.portalshard.items.ItemHandler;
 import grafnus.portalshard.util.placement.RelativePosition;
-import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -99,7 +100,7 @@ public class PlayerInteractRespawnAnchor implements IEvent {
 
         if (connection.getLevel() != requiredLevel) {
             String actionbar = ChatColor.LIGHT_PURPLE +  "Upgrade not possible! Required Level: " + ChatColor.GOLD + requiredLevel + ChatColor.LIGHT_PURPLE + " Portal Level: " + ChatColor.GOLD + connection.getLevel();
-            event.getPlayer().sendActionBar(Component.text(actionbar));
+            event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(actionbar));
             return;
         }
 
@@ -109,7 +110,7 @@ public class PlayerInteractRespawnAnchor implements IEvent {
         ConnectionDAO.saveConnection(connection);
 
         String actionbar = ChatColor.LIGHT_PURPLE +  "Upgraded! Portal Level: " + ChatColor.GOLD + (newLevel);
-        event.getPlayer().sendActionBar(Component.text(actionbar));
+        event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(actionbar));
 
         event.getPlayer().getInventory().getItemInMainHand().setAmount((event.getPlayer().getInventory().getItemInMainHand().getAmount() - 1));
     }
@@ -163,7 +164,7 @@ public class PlayerInteractRespawnAnchor implements IEvent {
         event.getPlayer().getInventory().setItemInMainHand(ender);
 
         String actionbar = ChatColor.LIGHT_PURPLE +  "Portal recharged: " + ChatColor.GOLD + newCharges + ChatColor.GRAY + "/" + ChatColor.LIGHT_PURPLE + "20";
-        event.getPlayer().sendActionBar(Component.text(actionbar));
+        event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(actionbar));
 
         int finalNewCharges = newCharges;
         BukkitRunnable task = new BukkitRunnable() {

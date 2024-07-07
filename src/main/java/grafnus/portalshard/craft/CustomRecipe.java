@@ -1,17 +1,16 @@
 package grafnus.portalshard.craft;
 
+import com.sun.istack.NotNull;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.function.Consumer;
 
 public interface CustomRecipe extends Recipe {
 
-    public @NotNull Consumer<CraftItemEvent> getCraftingCallback();
+    public @NotNull
+    Consumer<CraftItemEvent> getCraftingCallback();
 
     public default void executeCallback(CraftItemEvent event) {
         if (getCraftingCallback() != null) {

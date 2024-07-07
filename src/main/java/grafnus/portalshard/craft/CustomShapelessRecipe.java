@@ -1,17 +1,12 @@
 package grafnus.portalshard.craft;
 
-import org.bukkit.Material;
+import com.sun.istack.NotNull;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Consumer;
 
 public class CustomShapelessRecipe extends ShapelessRecipe implements CustomRecipe {

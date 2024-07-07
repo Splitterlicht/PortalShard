@@ -1,26 +1,18 @@
 package grafnus.portalshard.craft;
 
-import grafnus.portalshard.items.ITEMS;
-import grafnus.portalshard.items.ItemFactory;
-import org.bukkit.Bukkit;
+import com.sun.istack.NotNull;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 
 public class CustomShapedRecipe extends ShapedRecipe implements CustomRecipe{
 
@@ -30,8 +22,7 @@ public class CustomShapedRecipe extends ShapedRecipe implements CustomRecipe{
     public CustomShapedRecipe(@NotNull NamespacedKey key, @NotNull ItemStack result) {
         super(key, result);
     }
-
-    @Override
+    
     public @NotNull CustomShapedRecipe setIngredient(char key, @NotNull ItemStack ingredient) {
         ingredients.put(key, new ItemStack(ingredient));
         super.setIngredient(key, ingredient.getType());
