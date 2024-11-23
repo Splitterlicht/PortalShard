@@ -7,6 +7,7 @@ import grafnus.portalshard.data.HibernateDO.HibernateConnection;
 import grafnus.portalshard.data.HibernateDO.HibernatePortal;
 import grafnus.portalshard.engine.task.CreatePortalITask;
 import grafnus.portalshard.engine.task.TaskFactory;
+import grafnus.portalshard.engine.task.UpdatePortalCharges;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

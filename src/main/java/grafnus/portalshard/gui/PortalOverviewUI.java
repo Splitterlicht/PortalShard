@@ -1,10 +1,9 @@
 package grafnus.portalshard.gui;
 
-import dev.dbassett.skullcreator.SkullCreator;
-import grafnus.portalshard.PERMISSION;
 import grafnus.portalshard.data.HibernateDO.HibernateConnection;
 import grafnus.portalshard.data.HibernateDO.HibernatePortal;
 import grafnus.portalshard.util.skulls.SKULL_SYMBOLS;
+import grafnus.portalshard.util.skulls.SkullCreator;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

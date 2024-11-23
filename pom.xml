@@ -63,8 +63,8 @@
             <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
         <repository>
-            <id>skullcreator-repo</id>
-            <url>https://github.com/deanveloper/SkullCreator/raw/mvn-repo/</url>
+            <id>minecraft-repo</id>
+            <url>https://libraries.minecraft.net/</url>
         </repository>
     </repositories>
 
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <version>1.21.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -102,9 +102,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>dev.dbassett</groupId>
-            <artifactId>skullcreator</artifactId>
-            <version>3.0.1</version>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>1.5.21</version>
             <scope>compile</scope>
         </dependency>
         <!-- SQLite JDBC driver -->

@@ -48,6 +48,8 @@ public class CreatePortalITask implements ITaskBlueprint {
                     upperOrientable.setAxis(Axis.Z);
                 }
                 upperPortal.setBlockData(upperOrientable);
+
+                TaskFactory.createTask(new UpdatePortalCharges(location));
             }
         };
     }

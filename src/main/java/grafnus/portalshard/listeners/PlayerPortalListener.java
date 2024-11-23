@@ -11,8 +11,10 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPortalEnterEvent;
+import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityPortalExitEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 
@@ -37,9 +39,31 @@ public class PlayerPortalListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPlayerTeleport(PlayerPortalEvent event) {
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onPlayerPortalFix(PlayerPortalEvent event) {
         Bukkit.getLogger().log(Level.INFO, "Event Called");
+
+        Pair<Location, Boolean> resultsLocationFix = fixNetherPortalExitLocation(event.getSearchRadius(), event.getTo());
+        Location fixedLocation = resultsLocationFix.getFirst();
+        boolean isPlayerPortalInRange = resultsLocationFix.getSecond();
+
+        if (isPlayerPortalInRange && Objects.isNull(fixedLocation)) {
+            event.setSearchRadius(1);
+            return;
+        }
+
+        event.setTo(fixedLocation);
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onEntityPortalFix(EntityPortalEvent event) {
+        Bukkit.getLogger().log(Level.INFO, "Event Called");
+
+        if (!(event.getEntity() instanceof Player)) {
+            if (RelativePosition.getLocationAboveN(event.getEntity().getLocation(), 2).getBlock().getType().equals(Material.RESPAWN_ANCHOR)) {
+                event.setCancelled(true);
+            }
+        }
 
         Pair<Location, Boolean> resultsLocationFix = fixNetherPortalExitLocation(event.getSearchRadius(), event.getTo());
         Location fixedLocation = resultsLocationFix.getFirst();

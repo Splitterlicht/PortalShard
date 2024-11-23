@@ -107,12 +107,16 @@ public class PlayerInteractRespawnAnchor implements IEvent {
         int newLevel = requiredLevel + 1;
 
         connection.setLevel(newLevel);
+        // Recharge when upgraded
+        connection.setCharges(20);
         ConnectionDAO.saveConnection(connection);
 
         String actionbar = ChatColor.LIGHT_PURPLE +  "Upgraded! Portal Level: " + ChatColor.GOLD + (newLevel);
         event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(actionbar));
 
         event.getPlayer().getInventory().getItemInMainHand().setAmount((event.getPlayer().getInventory().getItemInMainHand().getAmount() - 1));
+
+        TaskFactory.createTask(new UpdatePortalCharges(loc));
     }
 
     private boolean doChecks(PlayerInteractEvent event) {
@@ -187,8 +191,8 @@ public class PlayerInteractRespawnAnchor implements IEvent {
         HibernatePortal portal = PortalDAO.getPortalByLocation(loc);
         if (portal == null)
             return;
+        event.setCancelled(true);
         PortalOverviewUI ui = new PortalOverviewUI(event.getPlayer(), portal);
         ui.openMenu();
-        event.setCancelled(true);
     }
 }

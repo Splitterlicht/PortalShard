@@ -1,6 +1,6 @@
 package grafnus.portalshard.gui;
 
-import dev.dbassett.skullcreator.SkullCreator;
+import grafnus.portalshard.util.skulls.SkullCreator;
 import grafnus.portalshard.data.DAO.PlayerPermissionDAO;
 import grafnus.portalshard.data.HibernateDO.HibernateConnection;
 import grafnus.portalshard.data.HibernateDO.HibernatePlayerPermission;
