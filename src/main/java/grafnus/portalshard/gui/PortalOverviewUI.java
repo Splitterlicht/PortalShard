@@ -3,7 +3,7 @@ package grafnus.portalshard.gui;
 import grafnus.portalshard.data.HibernateDO.HibernateConnection;
 import grafnus.portalshard.data.HibernateDO.HibernatePortal;
 import grafnus.portalshard.util.skulls.SKULL_SYMBOLS;
-import grafnus.portalshard.util.skulls.SkullCreator;
+import grafnus.portalshard.util.skulls.SkullFactory;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -35,7 +35,7 @@ public class PortalOverviewUI {
         }
 
         Slot playerHead = menu.getSlot(10);
-        ItemStack ownerHead = SkullCreator.itemFromUuid(connection.getCreatorPlayer().getUniqueId());
+        ItemStack ownerHead = SkullFactory.getPlayerHead(connection.getCreatorPlayer());
 
         ItemMeta ownerHeadMeta = ownerHead.getItemMeta();
 
@@ -47,7 +47,7 @@ public class PortalOverviewUI {
         playerHead.setClickOptions(ClickOptions.DENY_ALL);
 
         Slot levelHead = menu.getSlot(13);
-        ItemStack levelSkull = SkullCreator.itemFromBase64(SKULL_SYMBOLS.ARROW_UP.toString());
+        ItemStack levelSkull = SkullFactory.getCustomTextureSkull(SKULL_SYMBOLS.ARROW_UP.toString());
         ItemMeta levelSkullMeta = levelSkull.getItemMeta();
 
         levelSkullMeta.setDisplayName("Level: " + connection.getLevel());
@@ -58,7 +58,7 @@ public class PortalOverviewUI {
 
         Slot chargeCounterHead = menu.getSlot(16);
 
-        ItemStack chargesSkull = SkullCreator.itemFromBase64(SKULL_SYMBOLS.GLOBE.toString());
+        ItemStack chargesSkull = SkullFactory.getCustomTextureSkull(SKULL_SYMBOLS.GLOBE.toString());
         ItemMeta chargesSkullMeta = chargesSkull.getItemMeta();
 
         chargesSkullMeta.setDisplayName("Portal Information");

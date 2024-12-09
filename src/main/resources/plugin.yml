@@ -1,7 +1,7 @@
 name: PortalShard
 version: '${project.version}'
 main: grafnus.portalshard.PortalShard
-api-version: 1.18
+api-version: 1.21
 prefix: PortalShard
 load: STARTUP
 depend: []

@@ -7,6 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerPermissionDAO {
@@ -49,12 +50,12 @@ public class PlayerPermissionDAO {
 
     public static List<HibernatePlayerPermission> getPlayerPermissionsByConnectionId(Long connectionId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<HibernatePlayerPermission> query = session.createQuery("FROM HibernatePlayerPermission WHERE connection_id >= :connection_id", HibernatePlayerPermission.class);
+            Query<HibernatePlayerPermission> query = session.createQuery("FROM HibernatePlayerPermission WHERE connection_id = :connection_id", HibernatePlayerPermission.class);
             query.setParameter("connection_id", connectionId);
             return query.list();
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new ArrayList<HibernatePlayerPermission>();
         }
     }
 

@@ -1,10 +1,10 @@
 package grafnus.portalshard.gui;
 
-import grafnus.portalshard.util.skulls.SkullCreator;
 import grafnus.portalshard.data.DAO.PlayerPermissionDAO;
 import grafnus.portalshard.data.HibernateDO.HibernateConnection;
 import grafnus.portalshard.data.HibernateDO.HibernatePlayerPermission;
 import grafnus.portalshard.data.HibernateDO.HibernatePortal;
+import grafnus.portalshard.util.skulls.SkullFactory;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -55,7 +55,7 @@ public class PortalPlayerListUI {
         List<HibernatePlayerPermission> playerPerms = PlayerPermissionDAO.getPlayerPermissionsByConnectionId(portal.getConnectionId());
 
         for (HibernatePlayerPermission playerPermission : playerPerms) {
-            ItemStack head = SkullCreator.itemFromUuid(playerPermission.getPlayer().getUniqueId());
+            ItemStack head = SkullFactory.getPlayerHead(playerPermission.getUuid());
             ItemMeta headMeta = head.getItemMeta();
 
             headMeta.setDisplayName(ChatColor.GOLD + playerPermission.getPlayer().getName());
