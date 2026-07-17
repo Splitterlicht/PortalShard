@@ -1,3 +1,5 @@
+# This Repo has been migrated to https://code.grafnus.de/Grafnus/PortalShard.
+
 <h1 align="center">
   <br>
   <a href="https://oss.grafnus.de/portalshard/"><img src="https://raw.githubusercontent.com/Splitterlicht/PortalShard/master/assets/images/PortalShard.png" alt="PortalShard" width="200"></a>
